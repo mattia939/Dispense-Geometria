@@ -1,8 +1,4 @@
-# Files di log, ausiliari, e di output generati da LaTeX
-# ---
-# Log files
 *.log
-# Auxiliary files
 *.aux
 *.bbl
 *.bcf
@@ -20,41 +16,4 @@
 *.synctex.gz
 *.fls
 *.fdb_latexmk
-# Temporary/lock files (Vim/Emacs/etc. may create these)
-*.~
-# Backup files
-*#*
-
-# Files di output per PDF, DVI, PS, ecc.
-# Generalmente l'output finale non va committato, ma va rigenerato.
-# ---
-# PDF output
-*.pdf
-# DVI/PS/EPS output
-*.dvi
-*.ps
-*.eps
-
-# Files generati per la bibliografia (BibTeX/Biber)
-# ---
-*.bbl
-*.blg
-
-# Files generati da IDE/Editor specifici (es. TeXShop, TeXworks, Kile)
-# ---
-.texpadtemp/
-.DS_Store
-*.bak
-*.old
-.idea/
 .vscode/
-
-# Se usi pacchetti che generano output particolari (es. Minted per il codice)
-# ---
-_minted*
-
-# Se stai compilando con pdflatex anziché ltx2pdf o altri
-# Potrebbe essere utile ignorare l'output di alcune cartelle temporanee
-# ---
-/output/
-/temp/

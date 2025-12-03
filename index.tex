@@ -5,7 +5,6 @@
 
 % --- FIX CRITICO PER WINDOWS ---
 % Sovrascriviamo i comandi che usano shell script di Linux (rm, date)
-% per evitare l'errore "Emergency stop" o loop infiniti su Windows.
 \renewcommand{\gitparse}{N/A}
 \renewcommand{\epoch}{\today}
 % -------------------------------
@@ -36,7 +35,9 @@
     breakable,
     drop fuzzy shadow,
     attach boxed title to top left={xshift=5mm,yshift*=-\tcboxedtitleheight/2},
-    boxed title style={colback=primary}
+    boxed title style={colback=primary},
+    % Aumenta la spaziatura verticale: arraystretch per le matrici, parskip per il testo
+    before upper={\renewcommand{\arraystretch}{1.5}\setlength{\parskip}{1em}}
 }
 
 % Box Esercizio (Stile Verde)
@@ -49,7 +50,8 @@
     breakable,
     drop fuzzy shadow,
     attach boxed title to top left={xshift=5mm,yshift*=-\tcboxedtitleheight/2},
-    boxed title style={colback=green!60!black}
+    boxed title style={colback=green!60!black},
+    before upper={\renewcommand{\arraystretch}{1.3}\setlength{\parskip}{1em}}
 }
 
 % --- Ambienti Matematici ---
@@ -167,6 +169,7 @@
  Risolvere un sistema "a occhio" o per sostituzione diventa impossibile appena le dimensioni crescono. Abbiamo bisogno di un metodo sistematico.
  Per farlo, per prima cosa dobbiamo liberarci della notazione ingombrante ($x, y, z, =, \dots$) e concentrarci solo sui numeri.
 
+ \newpage
  \section{Il Linguaggio Compatto: Le Matrici}
 
  Notiamo che in un sistema lineare, le incognite sono solo dei "segnaposto" ordinati. Ciò che determina la soluzione sono i coefficienti.
@@ -192,14 +195,11 @@
  Notare lo $0$ inserito dove manca l'incognita (nella seconda e terza equazione).
  \end{boxesempio}
 
+ \newpage
  \section{L'Algoritmo di Gauss sulle Matrici}
 
- Ora che abbiamo la matrice, l'obiettivo è trovare le soluzioni. Questo processo si dividerà in 2 passi ben distinti:
-
- \begin{itemize}
-    \item \textbf{Riduzione a Forma a Scala:} Usando operazioni sulle righe (mosse di riga), trasformiamo la matrice in una forma semplificata chiamata "forma a scala".
-    \item \textbf{Sostituzione all'Indietro (Algoritmo di Gauss):} Una volta in forma a scala, riscriviamo il sistema e risolviamo partendo dall'ultima equazione verso la prima.
- \end{itemize}
+ Ora che abbiamo la matrice, l'obiettivo è semplificarla. L'Algoritmo di Gauss usa delle "mosse" che non cambiano le soluzioni del sistema, ma trasformano la matrice in una forma facile da leggere.
+ In particolare per risolvere un sistema lineare abbiamo 2 fasi. Il 1° è quello di portare la matrice in \textbf{Forma a Scala} la 2° e applicare l'algoritmo di Gauss.
 
  \begin{definizione}[Mosse di Riga]
  Le seguenti operazioni sulle righe della matrice producono una matrice \textbf{equivalente} (corrispondente a un sistema con le stesse soluzioni):
@@ -312,6 +312,7 @@
      \item \textbf{Variabili Libere ($\vl$):} Sono le incognite che corrispondono alle colonne \emph{senza} pivot. Queste diventeranno i nostri parametri.
  \end{itemize}
 
+ \newpage
  \section{Algoritmo di Gauss}
 
  Ora che il sistema lineare è scala non ci resta altro che applicare l'algoritmo di Gauss.
@@ -520,6 +521,7 @@
  (Nota: queste due condizioni implicano che $O_V \in W$).
  \end{proposizione}
 
+ \newpage
  \section{Come trattare Polinomi e Matrici come Vettori}
 
  Finora abbiamo applicato l'Algoritmo di Gauss a vettori colonna standard (elementi di $\mathbb{R}^n$). Ma l'Algebra Lineare si applica anche a oggetti più complessi, come polinomi o intere matrici. Possiamo "tradurre" qualsiasi spazio vettoriale di dimensione finita in vettori colonna tramite il concetto di \textbf{Coordinate}.
@@ -576,6 +578,7 @@
  \paragraph{A cosa serve?}
  Lo Span ci fornisce un modo \emph{costruttivo} per descrivere un sottospazio. Dire $W = \Span\{v_1, v_2\}$ (un piano in $\R^3$) è molto più compatto che elencare tutti i suoi infiniti punti. Questa è una \textbf{presentazione parametrica}.
 
+ \newpage
  \section{Indipendenza Lineare}
 
  A volte potrebbe capitare che in qualche esercizio ci vengano dati dei vettori ma non "tutti sono necessari" per generare lo spazio. Alcuni potrebbero essere "ridondanti", cioè ottenibili come combinazione lineare (somma o prodotto) degli altri.
@@ -614,6 +617,7 @@
  \end{enumerate}
  \end{boxesempio}
 
+ \newpage
  \section{Basi e Dimensione}
 
  Vogliamo una descrizione dello spazio $V$ che sia sia completa (generatori) sia efficiente (indipendente).
@@ -672,6 +676,7 @@
  \end{enumerate}
  \end{boxesempio}
 
+ \newpage
  \section{Rappresentazioni: Confronto tra Cartesiana e Parametrica}
 
  Ora possiamo collegare la dimensione ai nostri due modi di descrivere i sottospazi.
@@ -769,6 +774,7 @@
  \end{enumerate}
  \end{boxesercizio}
 
+ \newpage
  \section{Coordinate: Il Ponte verso $\K^n$}
 
  \begin{definizione}[Coordinate]
@@ -914,6 +920,7 @@
  \end{enumerate}
  \end{boxesempio}
 
+ \newpage
  \section{La Formula di Grassmann e la Somma Diretta}
 
  Il Teorema di Grassmann stabilisce una relazione fondamentale tra le dimensioni della somma e dell'intersezione, permettendoci di calcolare una dimensione se conosciamo le altre.
@@ -1032,6 +1039,7 @@
  \end{enumerate}
  \end{boxesempio}
 
+ \newpage
  \section{Nucleo e Immagine: L'Analisi di T}
 
  Per capire come "funziona" un'applicazione lineare $T: V \to W$, dobbiamo farci due domande fondamentali:
@@ -1118,6 +1126,7 @@
  \paragraph{A cosa serve?}
  È una "legge di conservazione" della dimensione. La dimensione dello spazio di partenza $V$ si "distribuisce" tra ciò che viene annullato ($\Ker$) e ciò che viene prodotto ($\Img$). È lo strumento di calcolo e verifica più potente per le applicazioni lineari.
 
+ \newpage
  \section{Lo Spazio delle Applicazioni Lineari}
 
  Gli appunti introducono un concetto affascinante: le applicazioni lineari stesse possono essere trattate come vettori.
@@ -1240,6 +1249,7 @@
  \end{enumerate}
  \end{boxesempio}
 
+ \newpage
  \section{Interazione tra Sottospazi Affini}
 
  Come per i sottospazi vettoriali, possiamo studiare l'intersezione e la "somma" di sottospazi affini $H = P_0 + W$ e $H' = Q_0 + W'$.
@@ -1328,6 +1338,7 @@
  Allora:
  $$ T(v) = T(\alpha_1 v_1 + \dots + \alpha_n v_n) = \alpha_1 T(v_1) + \dots + \alpha_n T(v_n) = \alpha_1 w_1 + \dots + \alpha_n w_n $$
 
+ \newpage
  \section{Esercizi di Esistenza: La Guida Pratica}
 
  Spesso negli esercizi (es. Es 1 del foglio) non ci viene fornita una base, ma un insieme generico di vettori di partenza e le loro immagini desiderate. Ci viene chiesto: \emph{"Esiste questa applicazione lineare? È unica?"}.
@@ -1370,6 +1381,7 @@
  Poiché $\begin{pmatrix} 1 \\ 0 \\ 0 \end{pmatrix} \neq \begin{pmatrix} 1 \\ 0 \\ 2 \end{pmatrix}$, l'applicazione \textbf{non esiste}.
  \end{boxesercizio}
 
+ \newpage
  \section{Proiezioni}
 
  Le proiezioni sono un tipo speciale di applicazione lineare legata alla somma diretta (Esercizio 2 del foglio).
@@ -1403,6 +1415,7 @@
  \end{enumerate}
  \end{boxesercizio}
 
+ \newpage
  \section{Inversa di un'Applicazione Lineare}
 
  Come per le funzioni, ci chiediamo se possiamo "tornare indietro".
