@@ -1,0 +1,514 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PREAMBOLO: Configurazione basata su unina_doc_class
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass{unina_doc_class}
+
+% --- FIX PER WINDOWS: Sovrascriviamo i comandi Unix-only ---
+% Questi comandi nel .cls usano 'rm' e 'date' di Linux che rompono la compilazione su Windows.
+% Li sostituiamo con testo statico.
+\renewcommand{\gitparse}{N/A}
+\renewcommand{\epoch}{\today} 
+% -----------------------------------------------------------
+
+% --- Definizioni Variabili Globali per la Copertina ---
+\gdef\documentname{Note di Algebra Lineare e Geometria}
+\gdef\documentyear{Un'introduzione concettuale}
+\gdef\xauthors{\hi{\iuser Rielaborazione da Appunti}} 
+\gdef\yauthors{} 
+\gdef\zauthors{} 
+
+% Titoli per i listing di codice
+\gdef\documentlsttitle{Frammenti di Codice}
+\gdef\documentlstlabel{Codice}
+
+% --- Pacchetti aggiuntivi ---
+\usepackage[italian]{babel}
+
+% --- Definizione Stili Personalizzati per i Box ---
+\newtcolorbox{boxesempio}{
+    enhanced,
+    colback=azure-gradient-1!20!white,
+    colframe=primary,
+    fonttitle=\bfseries,
+    title=Esempio,
+    breakable,
+    drop fuzzy shadow,
+    attach boxed title to top left={xshift=5mm,yshift*=-\tcboxedtitleheight/2},
+    boxed title style={colback=primary}
+}
+
+\newtcolorbox{boxesercizio}[1][Esercizio Prototipo]{
+    enhanced,
+    colback=green-gradient-1!20!white,
+    colframe=green!60!black,
+    fonttitle=\bfseries,
+    title={#1},
+    breakable,
+    drop fuzzy shadow,
+    attach boxed title to top left={xshift=5mm,yshift*=-\tcboxedtitleheight/2},
+    boxed title style={colback=green!60!black}
+}
+
+% --- Ambienti Matematici ---
+\theoremstyle{definition}
+\newtheorem{definizione}{Definizione}[chapter]
+\newtheorem{teorema}[definizione]{Teorema}
+\newtheorem{osservazione}[definizione]{Osservazione}
+\newtheorem{proposizione}[definizione]{Proposizione}
+
+% --- Scorciatoie Matematiche ---
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Span}{\text{Span}}
+\newcommand{\Ker}{\text{Ker}}
+\newcommand{\Img}{\text{Im}}
+\newcommand{\dimn}{\text{dim}}
+\newcommand{\rk}{\text{rk}}
+\newcommand{\vl}{\text{VL}}
+\newcommand{\vd}{\text{VD}}
+\newcommand{\Hom}{\text{Hom}}
+\newcommand{\Giac}{\text{Giac}}
+
+\pagestyle{plain}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CORPO DEL DOCUMENTO
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+ % Genera la copertina
+ \coverpage{26}{\documentyear}{30}{\documentname}
+
+ % Introduzione
+ \introduction{Nome Docente}{Queste note sono una rielaborazione personale.}
+
+ \tableofcontents
+ \newpage
+
+ \chapter{Il Problema di Partenza: Sistemi Lineari}
+
+ L'algebra lineare, nella sua essenza, nasce da un problema molto pratico: trovare un modo sistematico ed efficiente per risolvere insiemi di equazioni, specialmente quando le equazioni e le incognite diventano numerose.
+
+ \section{Equazioni e Sistemi}
+ Iniziamo definendo il nostro oggetto di studio fondamentale.
+
+ \begin{definizione}[Sistema Lineare]
+ Un \textbf{sistema lineare} $m \times n$ (leggi: "m per n") è un insieme di $m$ equazioni lineari in $n$ incognite (o variabili) $x_1, \dots, x_n$.
+ La sua forma canonica è:
+ $$
+ \begin{cases}
+     a_{11}x_1 + a_{12}x_2 + \dots + a_{1n}x_n = b_1 \\
+     a_{21}x_1 + a_{22}x_2 + \dots + a_{2n}x_n = b_2 \\
+     \vdots \\
+     a_{m1}x_1 + a_{m2}x_2 + \dots + a_{mn}x_n = b_m
+ \end{cases}
+ $$
+ dove i numeri $a_{ij}$ sono i \textbf{coefficienti} e i $b_i$ sono i \textbf{termini noti}.
+ \end{definizione}
+
+ \paragraph{A cosa serve questa definizione?}
+ Stabilisce il nostro campo di gioco. Qualsiasi problema lineare, dalla fisica all'economia, può essere modellato in questa forma.
+
+ \begin{boxesempio}
+ \begin{enumerate}
+     \item \textbf{Sistema $2 \times 2$:} Due equazioni in due incognite.
+     $$ \begin{cases} x_1 + x_2 = 3 \\ 2x_1 - x_2 = 0 \end{cases} $$
+    
+     \item \textbf{Sistema $2 \times 3$:} Due equazioni in tre incognite.
+     $$ \begin{cases} x + y + z = 1 \\ 2x - y = 0 \end{cases} $$
+ \end{enumerate}
+ \end{boxesempio}
+
+ \paragraph{La Forma della Soluzione: Vettori e n-uple}
+ Quando risolviamo un sistema con $n$ incognite, il risultato non è un numero singolo, ma una lista ordinata di $n$ valori (uno per ogni variabile). In Algebra Lineare, chiamiamo questa lista \textbf{vettore} o \textbf{$n$-upla}.
+
+ Possiamo rappresentare la soluzione in due modi grafici equivalenti:
+ \begin{itemize}
+     \item \textbf{In orizzontale (n-upla):} $v = (2, \ 4, \ -3, \ 1)$
+     \item \textbf{In verticale (Vettore colonna):} $v = \begin{pmatrix} 2 \\ 4 \\ -3 \\ 1 \end{pmatrix}$
+ \end{itemize}
+ Sebbene il significato sia lo stesso, nel contesto delle matrici e per scrivere l'insieme delle soluzioni $V(S)$, useremo quasi sempre la \textbf{notazione in colonna}.
+
+ \begin{definizione}[Soluzione e Compatibilità]
+ Una \textbf{soluzione} del sistema è una $n$-upla di numeri $(\alpha_1, \dots, \alpha_n)$ che, sostituiti alle incognite $(x_1, \dots, x_n)$, rendono vere \emph{tutte} le equazioni simultaneamente. L'insieme di tutte le soluzioni si chiama $V(S)$.
+ \begin{itemize}
+     \item Se $V(S) \neq \emptyset$ (esiste almeno una soluzione), il sistema è \textbf{compatibile}.
+     \item Se $V(S) = \emptyset$ (non esistono soluzioni), il sistema è \textbf{incompatibile}.
+ \end{itemize}
+ \end{definizione}
+
+ \paragraph{A cosa serve?}
+ Questa definizione classifica i sistemi in due categorie fondamentali: quelli che hanno una risposta (compatibili) e quelli che non ce l'hanno (incompatibili).
+
+ \begin{boxesempio}
+ \begin{enumerate}
+     \item \textbf{Compatibile (Soluzione Unica):}
+     $ \begin{cases} x = 5 \\ y = 2 \end{cases} $ \\ 
+     L'unica soluzione è $V(S) = \{(5, 2)\}$.
+ \end{enumerate}
+ \end{boxesempio}
+
+ Vedremo più tardi che le soluzioni non saranno sempre così semplici da rappresentare.
+
+ \begin{definizione}[Sistema Omogeneo]
+ Un sistema lineare si dice \textbf{omogeneo} se tutti i termini noti sono nulli ($b_1 = \dots = b_m = 0$).
+ \end{definizione}
+
+ \chapter{Il Metodo Risolutivo: Matrici e Algoritmo di Gauss}
+
+ Risolvere un sistema "a occhio" o per sostituzione diventa impossibile appena le dimensioni crescono. Abbiamo bisogno di un metodo sistematico.
+ Per farlo, per prima cosa dobbiamo liberarci della notazione ingombrante ($x, y, z, =, \dots$) e concentrarci solo sui numeri.
+
+ \section{Il Linguaggio Compatto: Le Matrici}
+
+ Notiamo che in un sistema lineare, le incognite sono solo dei "segnaposto" ordinati. Ciò che determina la soluzione sono i coefficienti.
+
+ \begin{definizione}[Matrice Associata a un Sistema]
+ Una \textbf{matrice} è una tabella rettangolare di numeri. Dato un sistema lineare, possiamo estrarre due matrici fondamentali:
+ \begin{itemize}
+     \item \textbf{Matrice Incompleta ($A$):} Contiene solo i coefficienti delle incognite.
+     \item \textbf{Matrice Completa o Aumentata ($(A|b)$):} È la matrice $A$ con l'aggiunta di una colonna finale separata (spesso da una linea verticale) che contiene i termini noti $b$.
+ \end{itemize}
+ \end{definizione}
+
+ \paragraph{A cosa serve?}
+ Un "sistema lineare" $S$ \emph{è} la sua matrice completa $(A|b)$. Lavorare sulla matrice è più pulito, più veloce e riduce gli errori di distrazione.
+
+ \begin{boxesempio}
+ \textbf{Dal Sistema alla Matrice:}
+ $$ S: \begin{cases} x - 2y + z = 0 \\ 3x + y = 5 \\ z = 2 \end{cases} \implies (A|b) = \left(\begin{array}{ccc|c} 
+ 1 & -2 & 1 & 0 \\ 
+ 3 & 1 & 0 & 5 \\ 
+ 0 & 0 & 1 & 2 
+ \end{array}\right) $$
+ Notare lo $0$ inserito dove manca l'incognita (nella seconda e terza equazione).
+ \end{boxesempio}
+
+ \section{L'Algoritmo di Gauss sulle Matrici}
+
+ Ora che abbiamo la matrice, l'obiettivo è semplificarla. L'Algoritmo di Gauss usa delle "mosse" che non cambiano le soluzioni del sistema, ma trasformano la matrice in una forma facile da leggere.
+ In particolare per risolvere un sistema lineare abbiamo 2 fasi. Il 1° è quello di portare la matrice in \textbf{Forma a Scala} la 2° e applicare l'algoritmo di Gauss.
+
+ \begin{definizione}[Mosse di Riga]
+ Le seguenti operazioni sulle righe della matrice producono una matrice \textbf{equivalente} (corrispondente a un sistema con le stesse soluzioni):
+ \begin{enumerate}
+     \item \textbf{Scambio ($R_{i \leftrightarrow j}$):} Scambiare la riga $i$ con la riga $j$.
+     \item \textbf{Moltiplicazione ($R_i \leftarrow \lambda R_i$):} Moltiplicare tutti gli elementi della riga $i$ per uno scalare $\lambda \neq 0$.
+     \item \textbf{Combinazione ($R_i \leftarrow R_i + \lambda R_j$):} Sostituire la riga $i$ con la somma di se stessa e un multiplo della riga $j$.
+ \end{enumerate}
+ \end{definizione}
+
+ L'obiettivo di queste mosse è raggiungere la \textbf{Forma a Scala}.
+
+ \begin{definizione}[Forma a Scala e Pivot]
+ Una matrice è detta \textbf{a scala} se soddisfa una precisa condizione visiva basata sulle colonne:
+ \begin{enumerate}
+     \item Il primo numero non nullo di ogni riga è chiamato \textbf{Pivot}.
+     \item Ogni Pivot deve trovarsi rigorosamente \textbf{più a destra} del Pivot della riga precedente.
+     \item Sotto ogni Pivot, tutti gli elementi della colonna devono essere \textbf{zero}.
+ \end{enumerate}
+ \end{definizione}
+
+ \paragraph{Interpretazione Pratica: La Regola delle Colonne}
+ Guardando la matrice per colonne da sinistra a destra:
+ \begin{itemize}
+     \item Appena troviamo un Pivot in una colonna, quella colonna è "conquistata" da quella riga.
+     \item Nessun'altra riga successiva può iniziare in quella colonna.
+     \item La matrice deve assumere una forma a "triangolo di zeri" nell'angolo in basso a sinistra.
+ \end{itemize}
+
+ \begin{boxesempio}
+ \textbf{Esempio di Riduzione $4 \times 4$:}
+ Consideriamo la matrice completa associata a un sistema di 4 equazioni in 4 incognite:
+ $$ 
+ \left(\begin{array}{cccc|c} 
+ \underline{1} & 1 & 1 & 1 & 4 \\ 
+ 2 & 3 & 4 & 1 & 5 \\ 
+ 0 & 2 & 2 & 0 & 2 \\ 
+ 1 & 2 & 2 & 2 & 6 
+ \end{array}\right) 
+ $$
+
+ \textbf{Passo 1: Sistemare la Colonna 1}
+ \begin{itemize}
+     \item \textbf{Analisi:} Il pivot è l'1 in alto a sinistra ($a_{11}$). Sotto di esso abbiamo un $2$, uno $0$ e un $1$. Lo $0$ va bene, ma il $2$ e l'1 vanno eliminati.
+     \item \textbf{Azione:} 
+     \begin{enumerate}
+         \item $R_2 \leftarrow R_2 - 2R_1$ (per eliminare il 2)
+         \item $R_4 \leftarrow R_4 - R_1$ (per eliminare l'1)
+     \end{enumerate}
+ \end{itemize}
+ $$ 
+ \left(\begin{array}{cccc|c} 
+ \underline{1} & 1 & 1 & 1 & 4 \\ 
+ 0 & \underline{1} & 2 & -1 & -3 \\ 
+ 0 & 2 & 2 & 0 & 2 \\ 
+ 0 & 1 & 1 & 1 & 2 
+ \end{array}\right) 
+ $$
+
+ \textbf{Passo 2: Sistemare la Colonna 2}
+ \begin{itemize}
+     \item \textbf{Analisi:} Ora ignoriamo la prima riga. Il nuovo "capo" è il pivot nella riga 2, colonna 2 (valore $\underline{1}$). Sotto di esso c'è un $2$ e un $1$. Dobbiamo fare pulizia.
+     \item \textbf{Azione:}
+     \begin{enumerate}
+         \item $R_3 \leftarrow R_3 - 2R_2$
+         \item $R_4 \leftarrow R_4 - R_2$
+     \end{enumerate}
+ \end{itemize}
+ $$ 
+ \left(\begin{array}{cccc|c} 
+ \underline{1} & 1 & 1 & 1 & 4 \\ 
+ 0 & \underline{1} & 2 & -1 & -3 \\ 
+ 0 & 0 & -2 & 2 & 8 \\ 
+ 0 & 0 & -1 & 2 & 5 
+ \end{array}\right) 
+ $$
+
+ \textbf{Passo 3: Sistemare la Colonna 3}
+ \begin{itemize}
+     \item \textbf{Analisi:} Siamo alla riga 3. Il candidato pivot è $-2$. Sotto di esso c'è un $-1$.
+     \item \textbf{Trucco (Scambio):} Notiamo che $-1$ è aritmeticamente più semplice di $-2$. Scambiamo le righe 3 e 4 per comodità ($R_3 \leftrightarrow R_4$), portando il $-1$ in posizione di pivot.
+ \end{itemize}
+ $$ 
+ \left(\begin{array}{cccc|c} 
+ \underline{1} & 1 & 1 & 1 & 4 \\ 
+ 0 & \underline{1} & 2 & -1 & -3 \\ 
+ 0 & 0 & \underline{-1} & 2 & 5 \\ 
+ 0 & 0 & -2 & 2 & 8 
+ \end{array}\right) 
+ $$
+ \begin{itemize}
+     \item \textbf{Azione Finale:} Ora usiamo il pivot $-1$ per eliminare il $-2$ sotto di esso: $R_4 \leftarrow R_4 - 2R_3$.
+ \end{itemize}
+ $$ 
+ \left(\begin{array}{cccc|c} 
+ \underline{1} & 1 & 1 & 1 & 4 \\ 
+ 0 & \underline{1} & 2 & -1 & -3 \\ 
+ 0 & 0 & \underline{-1} & 2 & 5 \\ 
+ 0 & 0 & 0 & \underline{-2} & -2 
+ \end{array}\right) 
+ $$
+
+ \textbf{Verifica Finale:}
+ Ogni riga inizia con un pivot (sottolineato) che è più a destra del precedente. Sotto ogni pivot ci sono solo zeri. La matrice è a scala.
+ \end{boxesempio}
+
+ \paragraph{Classificazione delle Variabili}
+ \begin{itemize}
+     \item \textbf{Variabili Dipendenti ($\vd$):} Sono le incognite che corrispondono alle colonne contenenti i pivot.
+     \item \textbf{Variabili Libere ($\vl$):} Sono le incognite che corrispondono alle colonne \emph{senza} pivot. Queste diventeranno i nostri parametri.
+ \end{itemize}
+
+ \section{Algoritmo di Gauss}
+
+ Ora che il sistema lineare è scala non ci resta altro che applicare l'algoritmo di Gauss.
+ La 1° cosa da fare è riportare la matrice in sistema lineare. E poi eseguire i seguenti passi:
+
+ \begin{itemize}
+     \item \textbf{Controllo Compatibilità:} Se notiamo una riga del tipo $(0 \dots 0 \ | \ k)$ con $k \neq 0$ (cioè un pivot cade nell'ultima colonna, quella dei termini noti), il sistema è \textbf{impossibile}. In tal caso $V(S) = \emptyset$.
+     \item Partendo dal basso verso l'alto, portiamo tutti i termini NON pivot a destra dell'uguale.
+     \item Sostituiamo il termine di pivot all'equazioni che sono sopra la riga designata.
+     \item Ripetere il processo fino ad arrivare alla 1° riga.
+ \end{itemize}
+
+ \textbf{Nota bene:} Il numero di variabili libere determina la "dimensione" della soluzione (0 = soluzione unica, 1 = retta di soluzioni, ecc.).
+
+ \begin{boxesempio}
+ \textbf{Conclusione Esempio $4 \times 4$:}
+ Riprendiamo la matrice ridotta a scala ottenuta nel passo precedente:
+ $$ 
+ \left(\begin{array}{cccc|c} 
+ \underline{1} & 1 & 1 & 1 & 4 \\ 
+ 0 & \underline{1} & 2 & -1 & -3 \\ 
+ 0 & 0 & \underline{-1} & 2 & 5 \\ 
+ 0 & 0 & 0 & \underline{-2} & -2 
+ \end{array}\right) 
+ $$
+
+ \begin{itemize}
+     \item \textbf{Analisi Compatibilità:} L'ultimo pivot ($-2$) è sulla quarta colonna (coefficiente di $x_4$), e \emph{non} sulla colonna dei termini noti. Il sistema è \textbf{compatibile}.
+     \item \textbf{Analisi Variabili:}
+     \begin{itemize}
+         \item Ci sono pivot nelle colonne 1, 2, 3 e 4. Quindi $\vd = \{x_1, x_2, x_3, x_4\}$.
+         \item Non ci sono colonne senza pivot. Quindi $\vl = \emptyset$.
+     \end{itemize}
+     Poiché il numero di variabili libere è 0, la soluzione esiste ed è \textbf{unica}.
+ \end{itemize}
+
+ \textbf{Sostituzione all'indietro:}
+ Riscriviamo il sistema partendo dall'ultima equazione e risalendo:
+ $$ 
+ \begin{cases} 
+ x_1 + x_2 + x_3 + x_4 = 4 \\ 
+ x_2 + 2x_3 - x_4 = -3 \\ 
+ -x_3 + 2x_4 = 5 \\ 
+ -2x_4 = -2 
+ \end{cases} 
+ $$
+
+ Calcoliamo i valori dal basso verso l'alto:
+ \begin{enumerate}
+     \item Dalla 4\textsuperscript{a} eq: $-2x_4 = -2 \implies x_4 = \mathbf{1}$.
+     \item Sostituisco in 3\textsuperscript{a}: $-x_3 + 2(1) = 5 \implies -x_3 = 3 \implies x_3 = \mathbf{-3}$.
+     \item Sostituisco in 2\textsuperscript{a}: $x_2 + 2(-3) - (1) = -3 \implies x_2 - 7 = -3 \implies x_2 = \mathbf{4}$.
+     \item Sostituisco in 1\textsuperscript{a}: $x_1 + 4 + (-3) + 1 = 4 \implies x_1 + 2 = 4 \implies x_1 = \mathbf{2}$.
+     \item Per scrivere la soluzione finale, partiamo col creare un vettore colonna con i valori trovati dall'alto verso il basso.
+ \end{enumerate}
+
+ \textbf{Scrittura finale della soluzione:}
+ $$ V(S) = \left\{ \begin{pmatrix} 4 \\ -3 \\ 5 \\ 2 \end{pmatrix} \right\} $$
+ \end{boxesempio}
+
+ \chapter{La Struttura Astratta: Spazi Vettoriali}
+
+ \section{Definizioni e Sottospazi}
+
+ \begin{definizione}[K-Spazio Vettoriale]
+ Un \textbf{K-Spazio Vettoriale} (o spazio vettoriale sul campo $\K$) è un insieme non vuoto $V$ dotato di due operazioni:
+ \begin{enumerate}
+     \item \textbf{Somma Interna} ($+$): $V \times V \to V$, $(v_1, v_2) \mapsto v_1 + v_2$
+     \item \textbf{Prodotto per Scalare} ($\cdot$): $\K \times V \to V$, $(\lambda, v) \mapsto \lambda v$
+ \end{enumerate}
+ Queste operazioni devono soddisfare 8 assiomi.
+ \end{definizione}
+
+ \paragraph{A cosa serve?}
+ In poche parole ci dice che qualsiasi altro "oggeto matematico" che rispetta quelle caratteristiche può essere ricondotto a vettore.
+
+ \begin{boxesempio}
+ \begin{enumerate}
+     \item \textbf{Vettori}: Già noti.
+     \item \textbf{$M_{2,2}(\R)$ (Matrici):} L'insieme delle matrici $2 \times 2$.
+     $$ \begin{pmatrix} a & b \\ c & d \end{pmatrix} + \begin{pmatrix} a' & b' \\ c' & d' \end{pmatrix} = \begin{pmatrix} a+a' & b+b' \\ c+c' & d+d' \end{pmatrix} $$
+     \item \textbf{$\R_{\le 2}[T]$ (Polinomi):} L'insieme dei polinomi di grado $\le 2$, $P(T) = aT^2+bT+c$.
+ \end{enumerate}
+ \end{boxesempio}
+
+ \begin{definizione}[Sottospazio Vettoriale]
+ Un sottoinsieme non vuoto $W \subseteq V$ è un \textbf{sottospazio vettoriale} se è esso stesso uno spazio vettoriale (usando le stesse operazioni di $V$).
+ \end{definizione}
+
+ \begin{proposizione}[Test del Sottospazio]
+ $W \subseteq V$ (con $W \neq \emptyset$) è un sottospazio se e solo se:
+ \begin{enumerate}
+     \item $\forall w_1, w_2 \in W \implies w_1 + w_2 \in W$ (Chiuso per la somma).
+     \item $\forall \lambda \in \K, \forall w \in W \implies \lambda w \in W$ (Chiuso per il prodotto scalare).
+ \end{enumerate}
+ \end{proposizione}
+
+ \section{Come trattare Polinomi e Matrici come Vettori}
+
+ Finora abbiamo applicato l'Algoritmo di Gauss a vettori colonna standard. Ma l'Algebra Lineare si applica anche a oggetti più complessi, come polinomi o intere matrici. Possiamo "tradurre" qualsiasi spazio vettoriale di dimensione finita in vettori colonna tramite il concetto di \textbf{Coordinate}.
+
+ \subsection{Caso 1: Dai Polinomi ai Vettori}
+ Un polinomio è definito dai suoi coefficienti. La variabile $t$ (o $x$) è solo un segnaposto per indicare la posizione.
+ $$ P(t) = a_0 + a_1 t + a_2 t^2 + \dots + a_n t^n \quad \longleftrightarrow \quad v_P = \begin{pmatrix} a_0 \\ a_1 \\ a_2 \\ \vdots \\ a_n \end{pmatrix} $$
+
+ \begin{boxesempio}
+ \textbf{Traduzione di Polinomi}
+ Siamo nello spazio dei polinomi di grado $\le 2$.
+ \begin{itemize}
+     \item $P_1(t) = 3 - 5t + t^2 \implies v_1 = \begin{pmatrix} 3 \\ -5 \\ 1 \end{pmatrix}$
+     \item $P_2(t) = t^2 - 4 \implies v_2 = \begin{pmatrix} -4 \\ 0 \\ 1 \end{pmatrix}$ (Attenzione al termine $t$ mancante!)
+     \item $P_3(t) = 2t \implies v_3 = \begin{pmatrix} 0 \\ 2 \\ 0 \end{pmatrix}$
+ \end{itemize}
+ \end{boxesempio}
+
+ \chapter{Descrivere Spazi Vettoriali con Basi e Dimensione}
+
+ \section{Generatori e Rappresentazioni Parametriche}
+
+ \begin{definizione}[Combinazione Lineare e Span]
+ Dato un insieme di vettori $U = \{v_1, \dots, v_s\}$ in $V$.
+ \begin{itemize}
+     \item Una \textbf{combinazione lineare} è un qualsiasi vettore $v$ della forma:
+     $$ v = \alpha_1 v_1 + \dots + \alpha_s v_s, \quad \text{con } \alpha_i \in \K $$
+     \item Lo \textbf{Span} di $U$, $\Span(U)$, è l'insieme di \emph{tutte} le possibili combinazioni lineari di $U$.
+ \end{itemize}
+ Lo $\Span(U)$ è il più piccolo sottospazio vettoriale di $V$ che contiene $U$. $U$ è un \textbf{insieme di generatori} per $\Span(U)$.
+ \end{definizione}
+
+ \section{Indipendenza Lineare}
+
+ \begin{definizione}[Indipendenza Lineare]
+ Un insieme di vettori $U = \{v_1, \dots, v_s\}$ si dice \textbf{linearmente indipendente} se nessun vettore è combinazione lineare degli altri.
+ Formalmente: l'unica soluzione dell'equazione omogenea $\alpha_1 v_1 + \dots + \alpha_s v_s = O_V$ è la soluzione \textbf{banale} $\alpha_1 = \dots = \alpha_s = 0$.
+ \end{definizione}
+
+ \section{Basi e Dimensione}
+
+ \begin{definizione}[Base]
+ Una \textbf{Base} $\mathcal{B} = \{v_1, \dots, v_n\}$ di uno spazio vettoriale $V$ è un insieme di vettori che soddisfa due condizioni:
+ \begin{enumerate}
+     \item $\Span(\mathcal{B}) = V$ (Sono generatori di tutto lo spazio).
+     \item $\mathcal{B}$ è linearmente indipendente (Non sono ridondanti).
+ \end{enumerate}
+ \end{definizione}
+
+ \begin{teorema}[Invarianza della Dimensione]
+ Tutte le basi di $V$ hanno lo stesso numero di elementi. Questo numero si chiama \textbf{Dimensione} di $V$, $\dimn(V)$.
+ \end{teorema}
+
+ \begin{boxesempio}
+ \begin{enumerate}
+     \item $\dimn(\R^3) = 3$
+     \item $\dimn(\R_{\le 2}[T]) = 3$
+     \item $\dimn(M_{2,2}(\R)) = 4$
+ \end{enumerate}
+ \end{boxesempio}
+
+ \chapter{Trasformare gli Spazi: Applicazioni Lineari}
+
+ \section{Definizione e Proprietà}
+
+ \begin{definizione}[Applicazione Lineare]
+ Un'applicazione $T: V \to W$ tra due K-spazi vettoriali $V$ e $W$ è \textbf{lineare} se conserva le operazioni:
+ \begin{enumerate}
+     \item \textbf{Additività:} $T(v_1 + v_2) = T(v_1) + T(v_2)$
+     \item \textbf{Omogeneità:} $T(\lambda v) = \lambda T(v)$
+ \end{enumerate}
+ \end{definizione}
+
+ \begin{osservazione}
+ Una condizione necessaria per la linearità è che l'origine sia mappata nell'origine: $T(O_V) = O_W$.
+ \end{osservazione}
+
+ \section{Nucleo e Immagine}
+
+ \begin{definizione}[Nucleo (Kernel)]
+ Il \textbf{Nucleo} di $T$ ($\Ker(T)$) è l'insieme dei vettori del dominio $V$ che vengono mappati nel vettore nullo del codominio $W$:
+ $$ \Ker(T) = \{v \in V \mid T(v) = O_W\} $$
+ \end{definizione}
+
+ \begin{definizione}[Immagine (Image)]
+ L'\textbf{Immagine} di $T$ ($\Img(T)$) è l'insieme dei vettori del codominio $W$ che sono "raggiunti" dalla trasformazione:
+ $$ \Img(T) = \{w \in W \mid \exists v \in V \text{ t.c. } T(v) = w\} $$
+ \end{definizione}
+
+ \begin{teorema}[Rango-Nullità]
+ $$ \dimn(V) = \dimn(\Ker(T)) + \dimn(\Img(T)) $$
+ \end{teorema}
+
+ \begin{boxesercizio}[Calcolo di Basi per Nucleo e Immagine]
+ Consideriamo $T: \R^3 \to \R^3$ definita da $T\begin{pmatrix} x \\ y \\ z \end{pmatrix} = \begin{pmatrix} x-y+2z \\ 3x-y \\ 2x-y+z \end{pmatrix}$.
+ Trovare una base di $\Ker(T)$ e $\Img(T)$.
+
+ \textbf{Svolgimento:}
+ \begin{enumerate}
+     \item \textbf{Matrice Associata $A$:}
+     $$ A = \begin{pmatrix} 1 & -1 & 2 \\ 3 & -1 & 0 \\ 2 & -1 & 1 \end{pmatrix} $$
+    
+     \item \textbf{Base del Nucleo $\Ker(T)$:}
+     Risolviamo $A \mathbf{v} = \mathbf{0}$. Riduciamo $A$ a scala:
+     $$ A \sim \begin{pmatrix} 1 & -1 & 2 \\ 0 & 1 & -3 \\ 0 & 0 & 0 \end{pmatrix} $$
+     Variabile libera $z$. Base $\Ker(T) = \left\{ \begin{pmatrix} 1 \\ 3 \\ 1 \end{pmatrix} \right\}$.
+
+     \item \textbf{Base dell'Immagine $\Img(T)$:}
+     Corrisponde allo Span delle colonne pivot della matrice originale $A$ (colonne 1 e 2).
+     Base $\Img(T) = \left\{ \begin{pmatrix} 1 \\ 3 \\ 2 \end{pmatrix}, \begin{pmatrix} -1 \\ -1 \\ -1 \end{pmatrix} \right\}$.
+ \end{enumerate}
+ \end{boxesercizio}
+
+\end{document}
