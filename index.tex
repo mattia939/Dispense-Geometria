@@ -3,32 +3,34 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \documentclass{unina_doc_class}
 
-% --- FIX PER WINDOWS: Sovrascriviamo i comandi Unix-only ---
-% Questi comandi nel .cls usano 'rm' e 'date' di Linux che rompono la compilazione su Windows.
-% Li sostituiamo con testo statico.
+% --- FIX CRITICO PER WINDOWS ---
+% Sovrascriviamo i comandi che usano shell script di Linux (rm, date)
+% per evitare l'errore "Emergency stop" o loop infiniti su Windows.
 \renewcommand{\gitparse}{N/A}
-\renewcommand{\epoch}{\today} 
-% -----------------------------------------------------------
+\renewcommand{\epoch}{\today}
+% -------------------------------
 
-% --- Definizioni Variabili Globali per la Copertina ---
+% --- Definizioni Variabili Globali (Frontespizio) ---
 \gdef\documentname{Note di Algebra Lineare e Geometria}
 \gdef\documentyear{Un'introduzione concettuale}
 \gdef\xauthors{\hi{\iuser Rielaborazione da Appunti}} 
 \gdef\yauthors{} 
 \gdef\zauthors{} 
 
-% Titoli per i listing di codice
+% Titoli per i listing di codice (richiesti dalla classe)
 \gdef\documentlsttitle{Frammenti di Codice}
 \gdef\documentlstlabel{Codice}
 
 % --- Pacchetti aggiuntivi ---
 \usepackage[italian]{babel}
 
-% --- Definizione Stili Personalizzati per i Box ---
+% --- Definizione Stili Personalizzati (Box Colorati) ---
+
+% Box Esempio (Stile Azzurro/Blu Federico II)
 \newtcolorbox{boxesempio}{
     enhanced,
-    colback=azure-gradient-1!20!white,
-    colframe=primary,
+    colback=azure-gradient-1!20!white, % Sfondo azzurro tenue
+    colframe=primary,                  % Blu istituzionale
     fonttitle=\bfseries,
     title=Esempio,
     breakable,
@@ -37,6 +39,7 @@
     boxed title style={colback=primary}
 }
 
+% Box Esercizio (Stile Verde)
 \newtcolorbox{boxesercizio}[1][Esercizio Prototipo]{
     enhanced,
     colback=green-gradient-1!20!white,
@@ -77,14 +80,18 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 
- % Genera la copertina
+ % Genera la copertina Federico II
  \coverpage{26}{\documentyear}{30}{\documentname}
 
- % Introduzione
- \introduction{Nome Docente}{Queste note sono una rielaborazione personale.}
+ % Introduzione (Abstract)
+ \introduction{Nome Docente}{Queste note sono una rielaborazione personale degli appunti del corso.}
 
  \tableofcontents
  \newpage
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ % INIZIO CONTENUTO ORIGINALE
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
  \chapter{Il Problema di Partenza: Sistemi Lineari}
 
@@ -187,8 +194,12 @@
 
  \section{L'Algoritmo di Gauss sulle Matrici}
 
- Ora che abbiamo la matrice, l'obiettivo è semplificarla. L'Algoritmo di Gauss usa delle "mosse" che non cambiano le soluzioni del sistema, ma trasformano la matrice in una forma facile da leggere.
- In particolare per risolvere un sistema lineare abbiamo 2 fasi. Il 1° è quello di portare la matrice in \textbf{Forma a Scala} la 2° e applicare l'algoritmo di Gauss.
+ Ora che abbiamo la matrice, l'obiettivo è trovare le soluzioni. Questo processo si dividerà in 2 passi ben distinti:
+
+ \begin{itemize}
+    \item \textbf{Riduzione a Forma a Scala:} Usando operazioni sulle righe (mosse di riga), trasformiamo la matrice in una forma semplificata chiamata "forma a scala".
+    \item \textbf{Sostituzione all'Indietro (Algoritmo di Gauss):} Una volta in forma a scala, riscriviamo il sistema e risolviamo partendo dall'ultima equazione verso la prima.
+ \end{itemize}
 
  \begin{definizione}[Mosse di Riga]
  Le seguenti operazioni sulle righe della matrice producono una matrice \textbf{equivalente} (corrispondente a un sistema con le stesse soluzioni):
@@ -361,6 +372,113 @@
  $$ V(S) = \left\{ \begin{pmatrix} 4 \\ -3 \\ 5 \\ 2 \end{pmatrix} \right\} $$
  \end{boxesempio}
 
+ \begin{boxesempio}
+ \textbf{Esempio Completo da Zero ($4 \times 5$)}
+
+ Risolviamo il seguente sistema di 4 equazioni in 5 incognite ($x_1, x_2, x_3, x_4, x_5$):
+ $$
+ (A|b) = \left(\begin{array}{ccccc|c}
+ 1 & 2 & -1 & 0 & 1 & 2 \\
+ 2 & 4 & -2 & 1 & 3 & 5 \\
+ -1 & -2 & 1 & 0 & -1 & -2 \\
+ 0 & 0 & 1 & 1 & 0 & 4
+ \end{array}\right)
+ $$
+
+ \textbf{Fase 1: Riduzione a Scala (Gauss)}
+ \begin{enumerate}
+     \item \textbf{Colonna 1:} Pivot $a_{11}=1$. Eliminiamo il $2$ (riga 2) e il $-1$ (riga 3).
+     $$ R_2 \leftarrow R_2 - 2R_1, \quad R_3 \leftarrow R_3 + R_1 $$
+     $$ \left(\begin{array}{ccccc|c}
+     \underline{1} & 2 & -1 & 0 & 1 & 2 \\
+     0 & 0 & 0 & 1 & 1 & 1 \\
+     0 & 0 & 0 & 0 & 0 & 0 \\
+     0 & 0 & 1 & 1 & 0 & 4
+     \end{array}\right) $$
+    
+     \item \textbf{Colonna 2:} La riga 2 ha uno $0$. Non c'è nessun numero diverso da zero sotto di essa nella colonna 2. Passiamo oltre.
+     \item \textbf{Colonna 3:} La riga 2 ha uno $0$, ma la riga 4 ha un $1$. Scambiamo $R_2 \leftrightarrow R_4$.
+     $$ \left(\begin{array}{ccccc|c}
+     \underline{1} & 2 & -1 & 0 & 1 & 2 \\
+     0 & 0 & \underline{1} & 1 & 0 & 4 \\
+     0 & 0 & 0 & 0 & 0 & 0 \\
+     0 & 0 & 0 & \underline{1} & 1 & 1
+     \end{array}\right) $$
+     (Notiamo che la vecchia riga 2 è finita in fondo, ed è già pronta come pivot per la colonna 4).
+     \item \textbf{Riordino:} Spostiamo la riga di zeri ($R_3$) in fondo per pulizia visiva ($R_3 \leftrightarrow R_4$).
+     $$ S = \left(\begin{array}{ccccc|c}
+     \underline{1} & 2 & -1 & 0 & 1 & 2 \\
+     0 & 0 & \underline{1} & 1 & 0 & 4 \\
+     0 & 0 & 0 & \underline{1} & 1 & 1 \\
+     0 & 0 & 0 & 0 & 0 & 0
+     \end{array}\right) $$
+ \end{enumerate}
+
+ \textbf{Fase 2: Analisi delle Variabili e Parametrizzazione}
+ Identifichiamo i pivot e le variabili:
+ \begin{itemize}
+     \item \textbf{Pivot:} Colonne 1 ($x_1$), 3 ($x_3$) e 4 ($x_4$). Queste sono le \textbf{Variabili Dipendenti}.
+     \item \textbf{No Pivot:} Colonne 2 ($x_2$) e 5 ($x_5$). Queste sono le \textbf{Variabili Libere}.
+ \end{itemize}
+
+ \paragraph{Perché usiamo $\alpha$ e $\beta$?}
+ Le variabili libere ($x_2, x_5$) non sono vincolate dal sistema: possono assumere \emph{qualsiasi} valore reale. Per evidenziare che questi valori sono una nostra libera scelta (e non un'incognita da scoprire), li rinominiamo con lettere greche (parametri):
+ $$ x_2 = \alpha, \quad x_5 = \beta \quad (\text{con } \alpha, \beta \in \mathbb{R}) $$
+ Questo rende la soluzione leggibile come una "ricetta" che dipende da due ingredienti a scelta.
+
+ \textbf{Fase 3: Sostituzione all'Indietro}
+ Riscriviamo il sistema ridotto mantenendo ancora le incognite originali ($x_2$ e $x_5$ sono le nostre variabili libere):
+ $$ \begin{cases} x_1 + 2x_2 - x_3 + x_5 = 2 \\ x_3 + x_4 = 4 \\ x_4 + x_5 = 1 \end{cases} $$
+
+ Risolviamo dal basso verso l'alto per esplicitare le variabili dipendenti ($x_4, x_3, x_1$) in funzione di quelle libere:
+ \begin{enumerate}
+     \item Dalla terza eq: $x_4 = 1 - x_5$
+     \item Dalla seconda eq: $x_3 = 4 - x_4 = 4 - (1 - x_5) = 3 + x_5$
+     \item Dalla prima eq: $x_1 = 2 - 2x_2 + x_3 - x_5 = 2 - 2x_2 + (3 + x_5) - x_5 = 5 - 2x_2$
+ \end{enumerate}
+
+ \textbf{Riepilogo della Soluzione (Il Sistema Finale):}
+ Ora sostituiamo le variabili libere con i parametri scelti ($x_2 = \alpha, x_5 = \beta$) e scriviamo l'elenco completo delle 5 soluzioni:
+ $$
+ \begin{cases}
+ x_1 = 5 - 2\alpha \\
+ x_2 = \alpha \quad (\text{Variabile Libera}) \\
+ x_3 = 3 + \beta \\
+ x_4 = 1 - \beta \\
+ x_5 = \beta \quad (\text{Variabile Libera})
+ \end{cases}
+ $$
+
+ \paragraph{Come costruire la soluzione vettoriale (Guida Pratica)}
+ Per passare dal sistema qui sopra alla forma vettoriale, dobbiamo "smontare" la soluzione in tre colonne (vettori), leggendo le righe \textbf{dall'alto verso il basso} (da $x_1$ a $x_5$).
+ \begin{enumerate}
+     \item \textbf{Vettore dei Termini Noti (Soluzione Particolare):} 
+     Scorri le 5 righe e copia solo i numeri che \textbf{non} hanno lettere greche vicino. Se una riga contiene solo parametri (es. $x_2=\alpha$ o $x_5=\beta$), scrivi 0.
+    
+     \item \textbf{Vettore di $\alpha$ (Coefficienti del primo parametro):}
+     Scorri le righe e copia il numero che moltiplica $\alpha$.
+     \begin{itemize}
+         \item Se $\alpha$ non c'è, scrivi 0.
+         \item \textbf{Attenzione alla riga 2 ($x_2$):} Poiché abbiamo posto $x_2 = \alpha$, il coefficiente è \textbf{1} (perché è come scrivere $1 \cdot \alpha$).
+     \end{itemize}
+
+     \item \textbf{Vettore di $\beta$ (Coefficienti del secondo parametro):}
+     Scorri le righe e copia il numero che moltiplica $\beta$.
+     \begin{itemize}
+         \item Anche qui, attenzione alla riga 5 ($x_5$): poiché $x_5 = \beta$, il coefficiente da inserire è \textbf{1}.
+     \end{itemize}
+ \end{enumerate}
+
+ \textbf{Scrittura Finale:}
+ Applicando la procedura dall'alto in basso ($x_1 \to x_5$):
+ $$ 
+ \begin{pmatrix} x_1 \\ x_2 \\ x_3 \\ x_4 \\ x_5 \end{pmatrix} = 
+ \underbrace{\begin{pmatrix} 5 \\ 0 \\ 3 \\ 1 \\ 0 \end{pmatrix}}_{\text{Termini Noti}} + 
+ \alpha \underbrace{\begin{pmatrix} -2 \\ 1 \\ 0 \\ 0 \\ 0 \end{pmatrix}}_{\text{Coeff. di } \alpha} + 
+ \beta \underbrace{\begin{pmatrix} 0 \\ 0 \\ 1 \\ -1 \\ 1 \end{pmatrix}}_{\text{Coeff. di } \beta}
+ $$
+ \end{boxesempio}
+
  \chapter{La Struttura Astratta: Spazi Vettoriali}
 
  \section{Definizioni e Sottospazi}
@@ -371,18 +489,21 @@
      \item \textbf{Somma Interna} ($+$): $V \times V \to V$, $(v_1, v_2) \mapsto v_1 + v_2$
      \item \textbf{Prodotto per Scalare} ($\cdot$): $\K \times V \to V$, $(\lambda, v) \mapsto \lambda v$
  \end{enumerate}
- Queste operazioni devono soddisfare 8 assiomi.
+ Queste operazioni devono soddisfare 8 assiomi (associatività, commutatività, esistenza dell'elemento neutro $O_V$, esistenza dell'opposto, distributività, ecc.).
  \end{definizione}
 
  \paragraph{A cosa serve?}
- In poche parole ci dice che qualsiasi altro "oggeto matematico" che rispetta quelle caratteristiche può essere ricondotto a vettore.
+ In poche parole ci dice che qualsiasi altro "oggeto matematico" che rispetta quelle caratteristiche può essere ricondotto a vettore, vediamo quali "oggetti matematici" incontreremo
 
  \begin{boxesempio}
  \begin{enumerate}
-     \item \textbf{Vettori}: Già noti.
+
+     \item \textbf{Vettori}: Già noti
+
      \item \textbf{$M_{2,2}(\R)$ (Matrici):} L'insieme delle matrici $2 \times 2$.
-     $$ \begin{pmatrix} a & b \\ c & d \end{pmatrix} + \begin{pmatrix} a' & b' \\ c' & d' \end{pmatrix} = \begin{pmatrix} a+a' & b+b' \\ c+c' & d+d' \end{pmatrix} $$
-     \item \textbf{$\R_{\le 2}[T]$ (Polinomi):} L'insieme dei polinomi di grado $\le 2$, $P(T) = aT^2+bT+c$.
+     $$ \begin{pmatrix} a & b \\ c & d \end{pmatrix} + \begin{pmatrix} a' & b' \\ c' & d' \end{pmatrix} = \begin{pmatrix} a+a' & b+b' \\ c+c' & d+d' \end{pmatrix} \quad \text{e} \quad \lambda \begin{pmatrix} a & b \\ c & d \end{pmatrix} = \begin{pmatrix} \lambda a & \lambda b \\ \lambda c & \lambda d \end{pmatrix} $$
+    
+     \item \textbf{$\R_{\le 2}[T]$ (Polinomi):} L'insieme dei polinomi di grado $\le 2$, $P(T) = aT^2+bT+c$. La somma e il prodotto per scalare sono le usuali operazioni tra polinomi.
  \end{enumerate}
  \end{boxesempio}
 
@@ -396,14 +517,16 @@
      \item $\forall w_1, w_2 \in W \implies w_1 + w_2 \in W$ (Chiuso per la somma).
      \item $\forall \lambda \in \K, \forall w \in W \implies \lambda w \in W$ (Chiuso per il prodotto scalare).
  \end{enumerate}
+ (Nota: queste due condizioni implicano che $O_V \in W$).
  \end{proposizione}
 
  \section{Come trattare Polinomi e Matrici come Vettori}
 
- Finora abbiamo applicato l'Algoritmo di Gauss a vettori colonna standard. Ma l'Algebra Lineare si applica anche a oggetti più complessi, come polinomi o intere matrici. Possiamo "tradurre" qualsiasi spazio vettoriale di dimensione finita in vettori colonna tramite il concetto di \textbf{Coordinate}.
+ Finora abbiamo applicato l'Algoritmo di Gauss a vettori colonna standard (elementi di $\mathbb{R}^n$). Ma l'Algebra Lineare si applica anche a oggetti più complessi, come polinomi o intere matrici. Possiamo "tradurre" qualsiasi spazio vettoriale di dimensione finita in vettori colonna tramite il concetto di \textbf{Coordinate}.
 
  \subsection{Caso 1: Dai Polinomi ai Vettori}
  Un polinomio è definito dai suoi coefficienti. La variabile $t$ (o $x$) è solo un segnaposto per indicare la posizione.
+ Per trasformare un polinomio in un vettore, fissiamo un ordine delle potenze (solitamente crescente: $1, t, t^2, \dots$) ed estraiamo i coefficienti.
  $$ P(t) = a_0 + a_1 t + a_2 t^2 + \dots + a_n t^n \quad \longleftrightarrow \quad v_P = \begin{pmatrix} a_0 \\ a_1 \\ a_2 \\ \vdots \\ a_n \end{pmatrix} $$
 
  \begin{boxesempio}
@@ -414,9 +537,29 @@
      \item $P_2(t) = t^2 - 4 \implies v_2 = \begin{pmatrix} -4 \\ 0 \\ 1 \end{pmatrix}$ (Attenzione al termine $t$ mancante!)
      \item $P_3(t) = 2t \implies v_3 = \begin{pmatrix} 0 \\ 2 \\ 0 \end{pmatrix}$
  \end{itemize}
+ Ora possiamo mettere $v_1, v_2, v_3$ in una matrice e usare Gauss per vedere se sono indipendenti!
  \end{boxesempio}
 
+ \subsection{Caso 2: Dalle Matrici ai Vettori}
+ Anche le matrici possono essere "srotolate" (o appiattite) per diventare un unico lungo vettore. L'importante è decidere un ordine di lettura e mantenerlo costante per tutti gli oggetti del problema. Il metodo standard è leggere la matrice elemento per elemento (riga per riga o colonna per colonna).
+ Dato uno spazio di matrici $2 \times 2$:
+ $$ A = \begin{pmatrix} a & b \\ c & d \end{pmatrix} \quad \longleftrightarrow \quad v_A = \begin{pmatrix} a \\ b \\ c \\ d \end{pmatrix} $$
+
+ \begin{boxesempio}
+ \textbf{Traduzione di Matrici}
+ Vogliamo studiare la dipendenza di queste due matrici:
+ $$ A = \begin{pmatrix} 1 & 2 \\ 0 & -1 \end{pmatrix}, \quad B = \begin{pmatrix} 3 & 0 \\ 5 & 2 \end{pmatrix} $$
+ Le trasformiamo in vettori di lunghezza 4:
+ $$ v_A = \begin{pmatrix} 1 \\ 2 \\ 0 \\ -1 \end{pmatrix}, \quad v_B = \begin{pmatrix} 3 \\ 0 \\ 5 \\ 2 \end{pmatrix} $$
+ Ora il problema è ridotto a lavorare con vettori colonna standard.
+ \end{boxesempio}
+
+ \paragraph{Regola d'Oro:}
+ Quando traduci, fai attenzione agli "zeri nascosti". Se in un polinomio manca una potenza o in una matrice un posto è vuoto, nel vettore corrispondente \textbf{devi inserire uno 0}. La posizione nel vettore è sacra: il primo numero deve sempre rappresentare la stessa cosa (es. il termine noto o l'elemento $a_{11}$) per tutti i vettori del sistema.
+
  \chapter{Descrivere Spazi Vettoriali con Basi e Dimensione}
+
+ Un sottospazio $W$ (come un piano) contiene infiniti vettori. Come possiamo descriverlo in modo finito ed efficiente? Dobbiamo trovare un insieme finito di "mattoni" (generatori) con cui costruire l'intero spazio.
 
  \section{Generatori e Rappresentazioni Parametriche}
 
@@ -430,14 +573,50 @@
  Lo $\Span(U)$ è il più piccolo sottospazio vettoriale di $V$ che contiene $U$. $U$ è un \textbf{insieme di generatori} per $\Span(U)$.
  \end{definizione}
 
+ \paragraph{A cosa serve?}
+ Lo Span ci fornisce un modo \emph{costruttivo} per descrivere un sottospazio. Dire $W = \Span\{v_1, v_2\}$ (un piano in $\R^3$) è molto più compatto che elencare tutti i suoi infiniti punti. Questa è una \textbf{presentazione parametrica}.
+
  \section{Indipendenza Lineare}
+
+ A volte potrebbe capitare che in qualche esercizio ci vengano dati dei vettori ma non "tutti sono necessari" per generare lo spazio. Alcuni potrebbero essere "ridondanti", cioè ottenibili come combinazione lineare (somma o prodotto) degli altri.
 
  \begin{definizione}[Indipendenza Lineare]
  Un insieme di vettori $U = \{v_1, \dots, v_s\}$ si dice \textbf{linearmente indipendente} se nessun vettore è combinazione lineare degli altri.
- Formalmente: l'unica soluzione dell'equazione omogenea $\alpha_1 v_1 + \dots + \alpha_s v_s = O_V$ è la soluzione \textbf{banale} $\alpha_1 = \dots = \alpha_s = 0$.
+ Formalmente (e operativamente): l'unica soluzione dell'equazione omogenea
+ $$ \alpha_1 v_1 + \dots + \alpha_s v_s = O_V $$
+ è la soluzione \textbf{banale} $\alpha_1 = \dots = \alpha_s = 0$.
+ Se esistono soluzioni non banali (almeno un $\alpha_i \neq 0$), sono \textbf{linearmente dipendenti}.
  \end{definizione}
 
+ \paragraph{A cosa serve?}
+ L'indipendenza lineare ci dice se i nostri generatori sono \textbf{efficienti}. Un insieme indipendente è un insieme di generatori "minimo", senza ridondanze. Ogni vettore aggiunge una "nuova direzione".
+
+ \begin{boxesempio}
+ \begin{enumerate}
+     \item \textbf{Indipendenti (Vettori canonici):}
+     In $\R^2$, $v_1 = (1,0), v_2 = (0,1)$.
+     L'equazione $\alpha_1(1,0) + \alpha_2(0,1) = (0,0)$ diventa $(\alpha_1, \alpha_2) = (0,0)$, che implica $\alpha_1=0, \alpha_2=0$. Sono indipendenti.
+     \item \textbf{Dipendenti (Collineari):}
+     In $\R^2$, $v_1 = (1,1), v_2 = (2,2)$. Sono dipendenti perché $v_2 = 2v_1$.
+     L'equazione $\alpha_1(1,1) + \alpha_2(2,2) = (0,0)$ ha la soluzione non banale $\alpha_1 = 2, \alpha_2 = -1$.
+     \item \textbf{Dipendenti (Tre vettori in $\R^2$):}
+     In $\R^2$, $\{ (1,0), (0,1), (1,1) \}$.
+     Sono dipendenti perché $(1,1) = 1 \cdot (1,0) + 1 \cdot (0,1)$.
+     L'equazione $1(1,0) + 1(0,1) - 1(1,1) = (0,0)$ ha $\alpha_i$ non nulli.
+     \item \textbf{Insieme contenente $O_V$:}
+     Qualsiasi insieme che contiene il vettore nullo, $\{v_1, \dots, v_s, O_V\}$, è \emph{sempre} linearmente dipendente.
+     Basta prendere $\alpha_1=0, \dots, \alpha_s=0$ e $\alpha_{s+1}=1$ (non nullo):
+     $0 v_1 + \dots + 0 v_s + 1 \cdot O_V = O_V$.
+     \item \textbf{Polinomi Indipendenti:}
+     In $\R_{\le 2}[T]$, $\{1, T, T^2\}$.
+     L'equazione $\alpha_1 \cdot 1 + \alpha_2 T + \alpha_3 T^2 = 0$ (il polinomio nullo) è vera se e solo se $\alpha_1=\alpha_2=\alpha_3=0$.
+     Sono indipendenti.
+ \end{enumerate}
+ \end{boxesempio}
+
  \section{Basi e Dimensione}
+
+ Vogliamo una descrizione dello spazio $V$ che sia sia completa (generatori) sia efficiente (indipendente).
 
  \begin{definizione}[Base]
  Una \textbf{Base} $\mathcal{B} = \{v_1, \dots, v_n\}$ di uno spazio vettoriale $V$ è un insieme di vettori che soddisfa due condizioni:
@@ -447,68 +626,816 @@
  \end{enumerate}
  \end{definizione}
 
+ \paragraph{A cosa serve?}
+ Una base è il "vocabolario" minimo e completo per descrivere ogni vettore. È l'ossatura, il "sistema di riferimento" dello spazio vettoriale.
+
+ \begin{definizione}[Le Basi Canoniche]
+ Per gli spazi vettoriali più comuni, esiste una scelta "standard" di vettori di base, chiamata \textbf{Base Canonica}. Quando non viene specificata un'altra base, usiamo sempre questa per calcolare le coordinate.
+ \begin{itemize}
+     \item \textbf{Vettori Colonna ($\mathbb{R}^n$):}
+     La base è $\mathcal{E} = \{e_1, \dots, e_n\}$, dove $e_i$ ha $1$ nella posizione $i$-esima e $0$ altrove.
+     $$ e_1 = \begin{pmatrix} 1 \\ 0 \\ \vdots \end{pmatrix}, \quad e_2 = \begin{pmatrix} 0 \\ 1 \\ \vdots \end{pmatrix}, \dots $$
+     \textbf{Dimensione:} $n$.
+     \item \textbf{Polinomi ($\mathbb{R}_{\le d}[t]$):}
+     La base è formata dalle potenze crescenti della variabile:
+     $$ \mathcal{B} = \{ 1, \ t, \ t^2, \ \dots, \ t^d \} $$
+     \textbf{Dimensione:} $d+1$ (attenzione: contiamo anche il termine noto $1 = t^0$).
+     \item \textbf{Matrici ($M_{m,n}$):}
+     La base è formata dalle matrici $E_{ij}$ che hanno un $1$ solo nella posizione $(i,j)$.
+     Esempio $2 \times 2$:
+     $$ E_{11} = \begin{pmatrix} 1 & 0 \\ 0 & 0 \end{pmatrix}, \ E_{12} = \begin{pmatrix} 0 & 1 \\ 0 & 0 \end{pmatrix}, \ E_{21} = \begin{pmatrix} 0 & 0 \\ 1 & 0 \end{pmatrix}, \ E_{22} = \begin{pmatrix} 0 & 0 \\ 0 & 1 \end{pmatrix} $$
+     \textbf{Dimensione:} $m \times n$.
+ \end{itemize}
+ \end{definizione}
+
  \begin{teorema}[Invarianza della Dimensione]
- Tutte le basi di $V$ hanno lo stesso numero di elementi. Questo numero si chiama \textbf{Dimensione} di $V$, $\dimn(V)$.
+ Sebbene uno spazio $V$ possa avere infinite basi diverse, \textbf{tutte} le basi di $V$ hanno lo stesso numero di elementi.
  \end{teorema}
+
+ \paragraph{A cosa serve?}
+ Questo teorema è profondo. Ci dice che il "numero di vettori" in una base non è una coincidenza, ma una proprietà intrinseca dello spazio.
+
+ \begin{definizione}[Dimensione]
+ Questo numero unico è la proprietà più importante dello spazio. Si chiama \textbf{Dimensione} di $V$, $\dimn(V)$.
+ \end{definizione}
+
+ \paragraph{A cosa serve?}
+ La dimensione è il "numero di coordinate" necessarie per descrivere un punto nello spazio. È il numero di "gradi di libertà".
 
  \begin{boxesempio}
  \begin{enumerate}
-     \item $\dimn(\R^3) = 3$
-     \item $\dimn(\R_{\le 2}[T]) = 3$
-     \item $\dimn(M_{2,2}(\R)) = 4$
+     \item $\dimn(\R^3) = 3$ (dalla base canonica $\mathcal{E}_3$).
+     \item $\dimn(\R_{\le 2}[T]) = 3$ (dalla base $\{1, T, T^2\}$).
+     \item $\dimn(M_{2,2}(\R)) = 4$ (dalla base nell'esempio precedente).
+     \item $\dimn(W) = 2$, dove $W$ è il piano $x+y+z=0$ (dalla sua base $\{\begin{pmatrix} -1 \\ 1 \\ 0 \end{pmatrix}, \begin{pmatrix} -1 \\ 0 \\ 1 \end{pmatrix}\}$).
+     \item $\dimn(\{O_V\}) = 0$ (Lo spazio nullo ha come base l'insieme vuoto $\emptyset$).
+ \end{enumerate}
+ \end{boxesempio}
+
+ \section{Rappresentazioni: Confronto tra Cartesiana e Parametrica}
+
+ Ora possiamo collegare la dimensione ai nostri due modi di descrivere i sottospazi.
+ \begin{itemize}
+     \item \textbf{Presentazione Cartesiana:} $W = V(S) \subset \K^n$. La dimensione $W$ è legata al numero di equazioni \emph{indipendenti} che lo definiscono. $\dimn(W) = n - \rk(A)$.
+     \item \textbf{Presentazione Parametrica:} $W = \Span(U) \subset V$. La dimensione $W$ è il numero di generatori in una base $\mathcal{B} \subseteq U$. $\dimn(W) = |\mathcal{B}|$.
+ \end{itemize}
+
+ \begin{boxesercizio}[Da Cartesiana ($V(S)$) a Parametrica ($\Span$)]
+ Questo è l'esercizio più semplice: \textbf{significa risolvere il sistema omogeneo} $S$ trovando i generatori delle soluzioni.
+ Sia $W = V(S) \subset \R^4$ definito dal sistema:
+ $$ S: \begin{cases} x+y-2z+t = 0 \\ x+2z+t = 0 \end{cases} $$
+
+ \textbf{Svolgimento:}
+ \begin{enumerate}
+     \item \textbf{Riduzione a Scala:} Scriviamo la matrice e usiamo Gauss.
+     $$ \begin{pmatrix} 1 & 1 & -2 & 1 \\ 1 & 0 & 2 & 1 \end{pmatrix} \xrightarrow{R_2 \leftarrow R_2 - R_1} 
+        \begin{pmatrix} \underline{1} & 1 & -2 & 1 \\ 0 & \underline{-1} & 4 & 0 \end{pmatrix} $$
+    
+     \item \textbf{Analisi del Sistema Ridotto:}
+     Osserviamo i pivot (sottolineati) nella matrice ridotta.
+     \begin{itemize}
+         \item \textbf{Variabili Dipendenti ($\vd$):} Colonne 1 e 2 $\implies \{x, y\}$.
+         \item \textbf{Variabili Libere ($\vl$):} Colonne 3 e 4 $\implies \{z, t\}$.
+     \end{itemize}
+     La dimensione sarà 2 (due parametri liberi).
+     \item \textbf{Scrittura del Sistema Ridotto e Parametrizzazione:}
+     Riscriviamo il sistema associato alla matrice a scala, assegnando parametri alle variabili libere ($z=\alpha, t=\beta$):
+     $$ \begin{cases} x + y - 2\alpha + \beta = 0 \\ -y + 4\alpha = 0 \end{cases} $$
+    
+     \item \textbf{Sostituzione all'Indietro:}
+     Ricaviamo le variabili dipendenti in funzione dei parametri.
+     \begin{itemize}
+         \item Dalla seconda eq: $y = 4\alpha$
+         \item Dalla prima eq: $x = -y + 2\alpha - \beta = -(4\alpha) + 2\alpha - \beta = -2\alpha - \beta$
+     \end{itemize}
+
+     \item \textbf{Forma Vettoriale e Span:}
+     Scriviamo il vettore generico e separiamo i parametri:
+     $$ \begin{pmatrix} x \\ y \\ z \\ t \end{pmatrix} = 
+        \begin{pmatrix} -2\alpha - \beta \\ 4\alpha \\ \alpha \\ \beta \end{pmatrix} = 
+        \alpha \begin{pmatrix} -2 \\ 4 \\ 1 \\ 0 \end{pmatrix} + \beta \begin{pmatrix} -1 \\ 0 \\ 0 \\ 1 \end{pmatrix} $$
+     Quindi:
+     $$ W = \Span \left\{ \begin{pmatrix} -2 \\ 4 \\ 1 \\ 0 \end{pmatrix}, \begin{pmatrix} -1 \\ 0 \\ 0 \\ 1 \end{pmatrix} \right\} $$
+ \end{enumerate}
+ \end{boxesercizio}
+
+ \begin{boxesercizio}[Da Parametrica ($\Span$) a Cartesiana ($V(S)$)]
+ Questo è più complesso: dobbiamo \textbf{trovare le equazioni} che hanno come soluzioni i nostri generatori.
+ Sia $W = \Span \left\{ \mathbf{v_1} = \begin{pmatrix} 1 \\ 1 \\ -1 \\ 0 \end{pmatrix}, \mathbf{v_2} = \begin{pmatrix} 2 \\ 0 \\ -1 \\ 2 \end{pmatrix} \right\} \subset \R^4$.
+ Un vettore $\mathbf{x}$ appartiene a $W$ se soddisfa certe equazioni lineari $a x + b y + c z + d t = 0$.
+ Il nostro obiettivo è trovare i coefficienti $(a,b,c,d)$ tali che l'equazione valga per \emph{tutti} i generatori.
+ \textbf{Svolgimento:}
+ \begin{enumerate}
+     \item \textbf{Impostazione del Sistema "Duale":}
+     Sostituiamo le coordinate dei generatori nell'equazione generica. Le incognite ora sono i coefficienti $a,b,c,d$.
+     \begin{itemize}
+         \item Per $\mathbf{v_1}$: $a(1)+b(1)+c(-1)+d(0) = 0$
+         \item Per $\mathbf{v_2}$: $a(2)+b(0)+c(-1)+d(2) = 0$
+     \end{itemize}
+    
+     \item \textbf{Riduzione a Scala (sui coefficienti):}
+     Risolviamo il sistema omogeneo nelle incognite $(a,b,c,d)$.
+     $$ \begin{pmatrix} 1 & 1 & -1 & 0 \\ 2 & 0 & -1 & 2 \end{pmatrix} \xrightarrow{R_2 \leftarrow R_2 - 2R_1} 
+        \begin{pmatrix} \underline{1} & 1 & -1 & 0 \\ 0 & \underline{-2} & 1 & 2 \end{pmatrix} $$
+       
+     \item \textbf{Analisi del Sistema Ridotto:}
+     \begin{itemize}
+         \item \textbf{Variabili Dipendenti ($\vd$):} Colonne 1 e 2 $\implies \{a, b\}$.
+         \item \textbf{Variabili Libere ($\vl$):} Colonne 3 e 4 $\implies \{c, d\}$.
+     \end{itemize}
+     Dato che ci sono 2 variabili libere, troveremo 2 soluzioni indipendenti per $(a,b,c,d)$, e quindi \textbf{2 equazioni cartesiane}.
+     \item \textbf{Parametrizzazione e Soluzione:}
+     Assegniamo i parametri liberi: $c = \alpha, \ d = \beta$. Il sistema ridotto è:
+     $$ \begin{cases} a + b - \alpha = 0 \\ -2b + \alpha + 2\beta = 0 \end{cases} $$
+     Ricaviamo $b$ e $a$:
+     \begin{itemize}
+         \item $2b = \alpha + 2\beta \implies b = \frac{1}{2}\alpha + \beta$
+         \item $a = -b + \alpha = -(\frac{1}{2}\alpha + \beta) + \alpha = \frac{1}{2}\alpha - \beta$
+     \end{itemize}
+    
+     \item \textbf{Estrazione delle Equazioni:}
+     Il "vettore dei coefficienti" è $(a,b,c,d) = (\frac{1}{2}\alpha - \beta, \ \frac{1}{2}\alpha + \beta, \ \alpha, \ \beta)$.
+     Troviamo le due equazioni scegliendo valori comodi per $\alpha$ e $\beta$:
+     \begin{itemize}
+         \item \textbf{Eq. 1 (poniamo $\alpha=2, \beta=0$):}
+         $a=1, b=1, c=2, d=0 \implies 1x + 1y + 2z + 0t = 0$.
+         \item \textbf{Eq. 2 (poniamo $\alpha=0, \beta=1$):}
+         $a=-1, b=1, c=0, d=1 \implies -1x + 1y + 0z + 1t = 0$.
+     \end{itemize}
+    
+     \item \textbf{Conclusione:}
+     Il sistema che definisce $W$ è:
+     $$ S: \begin{cases} x+y+2z = 0 \\ -x+y+t = 0 \end{cases} $$
+ \end{enumerate}
+ \end{boxesercizio}
+
+ \section{Coordinate: Il Ponte verso $\K^n$}
+
+ \begin{definizione}[Coordinate]
+ Data una base \emph{ordinata} $\mathcal{B} = \{v_1, \dots, v_n\}$, ogni vettore $v \in V$ si può scrivere in modo \textbf{unico} come combinazione lineare dei vettori della base:
+ $$ v = \alpha_1 v_1 + \dots + \alpha_n v_n $$
+ Il vettore colonna $\varphi_{\mathcal{B}}(v) = v_{\mathcal{B}} = \begin{pmatrix} \alpha_1 \\ \vdots \\ \alpha_n \end{pmatrix} \in \K^n$ è il \textbf{vettore delle coordinate} di $v$ rispetto alla base $\mathcal{B}$.
+ \end{definizione}
+
+ \paragraph{A cosa serve?}
+ Le coordinate sono un ponte tra il mondo astratto (Polinomi, Matrici, ecc.) e il mondo concreto dei vettori colonna $\K^n$. La mappa $\varphi_{\mathcal{B}}: V \to \K^n$ è un "traduttore" che ci permette di usare gli algoritmi di Gauss (sviluppati per $\K^n$) su spazi astratti.
+
+ \begin{boxesercizio}[Calcolo delle Coordinate]
+ Sia $V = \R^2$ con la base $\mathcal{B} = \left\{ v_1 = \begin{pmatrix} 1 \\ 1 \end{pmatrix}, v_2 = \begin{pmatrix} 1 \\ -1 \end{pmatrix} \right\}$.
+ Trovare le coordinate del vettore $v = \begin{pmatrix} 5 \\ 1 \end{pmatrix}$ rispetto a $\mathcal{B}$.
+ \textbf{Svolgimento:}
+ Dobbiamo trovare $\alpha_1, \alpha_2$ tali che $v = \alpha_1 v_1 + \alpha_2 v_2$.
+ $$ \begin{pmatrix} 5 \\ 1 \end{pmatrix} = \alpha_1 \begin{pmatrix} 1 \\ 1 \end{pmatrix} + \alpha_2 \begin{pmatrix} 1 \\ -1 \end{pmatrix} $$
+ Questo è un sistema lineare nelle incognite $\alpha_1, \alpha_2$:
+ $$ \begin{cases} \alpha_1 + \alpha_2 = 5 \\ \alpha_1 - \alpha_2 = 1 \end{cases} $$
+ Risolvendo (es. sommando le righe $2\alpha_1 = 6 \implies \alpha_1=3$), troviamo $\alpha_1=3$ e $\alpha_2=2$.
+ Quindi, il vettore delle coordinate è $v_{\mathcal{B}} = \begin{pmatrix} 3 \\ 2 \end{pmatrix}$.
+ \end{boxesercizio}
+
+ \begin{boxesempio}
+ \begin{enumerate}
+     \item \textbf{Coordinate in $\R^n$ (Base Canonica):}
+     $V = \R^2$, $\mathcal{E}_2 = \{(1,0), (0,1)\}$.
+     $v = (5, 2)$.
+     $v = 5 e_1 + 2 e_2 \implies v_{\mathcal{E}_2} = \begin{pmatrix} 5 \\ 2 \end{pmatrix}$.
+     (Le coordinate rispetto alla base canonica sono il vettore stesso).
+     \item \textbf{Coordinate in $\R^n$ (Altra Base):}
+     (Vedi Esercizio Prototipo sopra). $v=(5,1)$, $\mathcal{B}=\{(1,1), (1,-1)\}$.
+     $v_{\mathcal{B}} = \begin{pmatrix} 3 \\ 2 \end{pmatrix}$.
+    
+     \item \textbf{Coordinate di Polinomi (Base Canonica):}
+     $V = \R_{\le 2}[T]$, $\mathcal{B} = \{1, T, T^2\}$.
+     $P(T) = 3T^2 - 2T + 5$.
+     $P(T) = 5 \cdot (1) + (-2) \cdot (T) + 3 \cdot (T^2) \implies P_{\mathcal{B}} = \begin{pmatrix} 5 \\ -2 \\ 3 \end{pmatrix}$.
+     \item \textbf{Coordinate di Polinomi (Altra Base):}
+     $V = \R_{\le 1}[T]$, $\mathcal{B} = \{T+1, T-1\}$. $P(T) = 2T+4$.
+     Dobbiamo risolvere $2T+4 = \alpha_1(T+1) + \alpha_2(T-1) = (\alpha_1+\alpha_2)T + (\alpha_1-\alpha_2)$.
+     $\begin{cases} \alpha_1+\alpha_2 = 2 \\ \alpha_1-\alpha_2 = 4 \end{cases} \implies \alpha_1=3, \alpha_2=-1$.
+     $P_{\mathcal{B}} = \begin{pmatrix} 3 \\ -1 \end{pmatrix}$.
+     \item \textbf{Coordinate di Matrici (Base Canonica):}
+     $V = M_{2,2}(\R)$.
+     $A = \begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix}$.
+     Usando la base $\mathcal{B} = \{E_{11}, E_{12}, E_{21}, E_{22}\}$, le coordinate sono $A_{\mathcal{B}} = \begin{pmatrix} 1 \\ 2 \\ 3 \\ 4 \end{pmatrix}$.
+ \end{enumerate}
+ \end{boxesempio}
+
+ \chapter{Interazione tra Sottospazi}
+
+ Una volta definiti i sottospazi $W$ e $W'$ all'interno di uno spazio vettoriale $V$, è naturale chiedersi come questi interagiscano.
+ Ci sono due operazioni fondamentali che li collegano: la somma (che unisce i vettori) e l'intersezione (che trova i vettori comuni).
+
+ \section{Somma e Intersezione}
+
+ \begin{definizione}[Somma di Sottospazi]
+ Dati due sottospazi $W$ e $W'$ di $V$, la loro \textbf{somma} $W+W'$ è l'insieme (che è anch'esso un sottospazio) formato dalla somma di ogni vettore di $W$ con ogni vettore di $W'$.
+ $$W+W' = \{ w + w' \mid w \in W, w' \in W' \}$$.
+ Se $W = \Span(U)$ e $W' = \Span(U')$, allora $W+W' = \Span(U \cup U')$.
+ Per trovare la base, si mettono tutti i generatori di $U$ e $U'$ in una matrice e si estraggono le colonne L.I. (colonne pivot).
+ \end{definizione}
+
+
+ \begin{boxesempio}
+ \begin{enumerate}
+     \item \textbf{Somma di vettori indipendenti:}
+     Siano dati i sottospazi di $\R^3$:
+     $$ W = \Span\left\{ \begin{pmatrix} 1 \\ 0 \\ 0 \end{pmatrix} \right\}, \quad W' = \Span\left\{ \begin{pmatrix} 0 \\ 1 \\ 0 \end{pmatrix} \right\} $$
+     La loro somma è generata dall'unione dei generatori:
+     $$ W+W' = \Span\left\{ \begin{pmatrix} 1 \\ 0 \\ 0 \end{pmatrix}, \begin{pmatrix} 0 \\ 1 \\ 0 \end{pmatrix} \right\} $$
+    
+     \item \textbf{Somma che genera l'intero spazio:}
+     Siano dati:
+     $$ W = \Span\{e_1, e_2\}, \quad W' = \Span\{e_3\} $$
+     Unendo i generatori otteniamo la base canonica completa:
+     $$ W+W' = \Span\{e_1, e_2, e_3\} = \R^3 $$
+    
+     \item \textbf{Somma con generatori ridondanti (Caso di Inclusione):}
+     Siano dati:
+     $$ W = \Span\left\{ \begin{pmatrix} 1 \\ 0 \\ 0 \end{pmatrix}, \begin{pmatrix} 0 \\ 1 \\ 0 \end{pmatrix} \right\}, \quad W' = \Span\left\{ \begin{pmatrix} 1 \\ 1 \\ 0 \end{pmatrix} \right\} $$
+     Notiamo che il generatore di $W'$ è già combinazione lineare di quelli di $W$ (è la somma $e_1+e_2$).
+     Essendo $W' \subset W$:
+     $$ W+W' = W $$
+    
+     \item \textbf{Somma con vettori in comune (Sovrapposizione):}
+     Siano dati:
+     $$ W = \Span\{e_1, e_2\}, \quad W' = \Span\{e_2, e_3\} $$
+     L'unione dei generatori è $\{e_1, e_2, e_2, e_3\}$. Eliminando il doppione $e_2$:
+     $$ W+W' = \Span\{e_1, e_2, e_3\} = \R^3 $$
+    
+     \item \textbf{Somma con il Sottospazio Nullo:}
+     Per qualsiasi sottospazio $W$:
+     $$ W + \{O_V\} = W $$
+ \end{enumerate}
+ \end{boxesempio}
+
+ \begin{definizione}[Intersezione di Sottospazi]
+ Dati due sottospazi $W$ e $W'$ di $V$, la loro \textbf{intersezione} $W \cap W'$ è l'insieme (anch'esso un sottospazio) di tutti i vettori che appartengono sia a $W$ che a $W'$:
+ $$W \cap W' = \{ v \in V \mid v \in W \text{ e } v \in W' \}$$.
+ Dati  $W=V(S)$ e $W'=V(S')$, allora l'intersezione è il sistema ottenuto unendo tutte le equazioni: $W \cap W' = V(S \cup S')$.
+ Per trovare la base, si risolve il sistema combinato
+ \end{definizione}
+
+ \begin{boxesempio}
+ \begin{enumerate}
+     \item \textbf{Intersezione di sottospazi definiti da equazioni (Cartesiana):}
+     Siano dati in $\R^3$:
+     $$ W = \{ (x,y,z) \mid z=0 \}, \quad W' = \{ (x,y,z) \mid x=0 \} $$
+     L'intersezione deve soddisfare entrambe le condizioni simultaneamente. Mettiamo le equazioni a sistema:
+     $$ W \cap W': \begin{cases} z=0 \\ x=0 \end{cases} $$
+     La variabile $y$ è libera. Il risultato è:
+     $$ W \cap W' = \{ (0,t,0) \mid t \in \R \} = \Span\left\{ \begin{pmatrix} 0 \\ 1 \\ 0 \end{pmatrix} \right\} $$
+    
+     \item \textbf{Intersezione con solo il vettore nullo (Somma Diretta):}
+     Siano dati in $\R^2$:
+     $$ W = \Span\left\{ \begin{pmatrix} 1 \\ 0 \end{pmatrix} \right\}, \quad W' = \Span\left\{ \begin{pmatrix} 0 \\ 1 \end{pmatrix} \right\} $$
+     Un vettore appartiene all'intersezione se è multiplo sia del primo che del secondo generatore.
+     L'unica possibilità è che i coefficienti siano zero.
+     $$ W \cap W' = \{ (0,0) \} = \{O_V\} $$
+    
+     \item \textbf{Intersezione tra Cartesiana e Parametrica:}
+     Siano dati in $\R^3$:
+     $$ W = \{ (x,y,z) \mid z=0 \}, \quad W' = \Span\left\{ \begin{pmatrix} 0 \\ 0 \\ 1 \end{pmatrix} \right\} $$
+     I vettori di $W'$ sono del tipo $(0,0,k)$. Per stare in $W$, la terza componente ($z$) deve essere 0. Quindi $k=0$.
+     $$ W \cap W' = \{ (0,0,0) \} $$
+    
+     \item \textbf{Intersezione nel caso di Inclusione ($W' \subset W$):}
+     Siano dati in $\R^3$:
+     $$ W = \{ (x,y,z) \mid z=0 \}, \quad W' = \Span\left\{ \begin{pmatrix} 1 \\ 0 \\ 0 \end{pmatrix} \right\} $$
+     Notiamo che il generatore di $W'$, $(1,0,0)$, soddisfa l'equazione di $W$ ($z=0$). Quindi tutto $W'$ è contenuto in $W$.
+     $$ W \cap W' = W' $$
+    
+     \item \textbf{Intersezione tra Sottospazi di Polinomi:}
+     In $V = \R_{\le 2}[T]$, siano dati:
+     $$ W = \Span\{1, T\}, \quad W' = \Span\{T, T^2\} $$
+     Cerchiamo i vettori comuni. Un polinomio in $W$ ha la forma $a + bT$. Un polinomio in $W'$ ha la forma $cT + dT^2$.
+     Uguagliandoli: $a + bT = cT + dT^2$.
+     Per il principio di identità dei polinomi: $d=0$ (manca $T^2$ a sinistra) e $a=0$ (manca il termine noto a destra).
+     Resta solo il termine di primo grado.
+     $$ W \cap W' = \Span\{T\} $$
+ \end{enumerate}
+ \end{boxesempio}
+
+ \section{La Formula di Grassmann e la Somma Diretta}
+
+ Il Teorema di Grassmann stabilisce una relazione fondamentale tra le dimensioni della somma e dell'intersezione, permettendoci di calcolare una dimensione se conosciamo le altre.
+
+ \begin{definizione}[Formula di Grassmann]
+ Dati due sottospazi $W$ e $W'$ di uno spazio vettoriale $V$ di dimensione finita:
+ $$\dimn(W + W') = \dimn(W) + \dimn(W') - \dimn(W \cap W')$$
+ \end{definizione}
+
+ \paragraph{A cosa serve?}
+ È una "legge di conservazione" per le dimensioni. Ci dice che se due sottospazi si sovrappongono molto (grande $\dimn(W \cap W')$), la loro somma sarà più piccola del previsto. Se si sovrappongono poco, la loro somma sarà grande.
+
+ \begin{definizione}[Somma Diretta]
+ Due sottospazi $W$ e $W'$ si dicono in \textbf{Somma Diretta} se la loro intersezione è il solo vettore nullo:
+ $$ W \cap W' = \{O_V\} $$
+ In questo caso, la loro somma si indica con $W \oplus W'$.
+ \end{definizione}
+
+ \begin{proposizione}[Proprietà della Somma Diretta]
+ Le seguenti affermazioni sono equivalenti:
+ \begin{enumerate}
+     \item $W$ e $W'$ sono in somma diretta ($W \cap W' = \{O_V\}$).
+     \item (Dalla Formula di Grassmann) $\dimn(W \oplus W') = \dimn(W) + \dimn(W')$.
+     \item L'unione di una base di $W$ e una base di $W'$ è una base per $W+W'$.
+     \item Ogni vettore $v \in W+W'$ si scrive in modo \textbf{unico} come $v = w+w'$.
+ \end{enumerate}
+ \end{proposizione}
+
+ \begin{boxesempio}
+ \begin{enumerate}
+     \item \textbf{Verifica di Somma Diretta ($W \cap W' = \{O_V\}$):}
+     In $\R^2$, siano dati:
+     $$ W = \Span\left\{ \begin{pmatrix} 1 \\ 0 \end{pmatrix} \right\}, \quad W' = \Span\left\{ \begin{pmatrix} 0 \\ 1 \end{pmatrix} \right\} $$
+     L'intersezione contiene i vettori che sono multipli sia di $(1,0)$ che di $(0,1)$. L'unico vettore possibile è $(0,0)$.
+     $$ \dimn(W)=1, \ \dimn(W')=1, \ \dimn(W \cap W')=0 $$
+     Per Grassmann: $\dimn(W+W') = 1 + 1 - 0 = 2$.
+     Poiché l'intersezione è nulla, scriviamo $W \oplus W'$.
+    
+     \item \textbf{Verifica di Somma NON Diretta (Intersezione non nulla):}
+     In $\R^3$, siano dati:
+     $$ W = \Span\{e_1, e_2\}, \quad W' = \Span\{e_2, e_3\} $$
+     Notiamo subito che il vettore $e_2$ appartiene a entrambi i sottospazi. Quindi $W \cap W' = \Span\{e_2\} \neq \{O_V\}$.
+     $$ \dimn(W)=2, \ \dimn(W')=2, \ \dimn(W \cap W')=1 $$
+     Per Grassmann: $\dimn(W+W') = 2 + 2 - 1 = 3$.
+     La somma riempie $\R^3$, ma non è diretta.
+    
+     \item \textbf{Sottospazi Supplementari:}
+     Due sottospazi $W, W'$ si dicono \textbf{supplementari} in $V$ se soddisfano due condizioni contemporaneamente:
+     1. Sono in somma diretta ($W \cap W' = \{O_V\}$).
+     2. La loro somma genera tutto lo spazio ($W + W' = V$).
+     \item \textbf{Conseguenza: Unicità della scomposizione:}
+     Nell'esempio 1 ($W \oplus W'$), prendiamo il vettore $v = \begin{pmatrix} 3 \\ 4 \end{pmatrix}$.
+     Esiste un \textbf{unico} modo per scriverlo come somma $w + w'$:
+     $$ \begin{pmatrix} 3 \\ 4 \end{pmatrix} = \underbrace{\begin{pmatrix} 3 \\ 0 \end{pmatrix}}_{\in W} + \underbrace{\begin{pmatrix} 0 \\ 4 \end{pmatrix}}_{\in W'} $$
+     Non esistono altre combinazioni.
+     \item \textbf{Conseguenza: Non unicità della scomposizione:}
+     Nell'esempio 2 (non somma diretta), prendiamo $v = \begin{pmatrix} 1 \\ 2 \\ 3 \end{pmatrix}$.
+     Possiamo scriverlo in modi diversi spostando il "pezzo comune" ($e_2$) da una parte all'altra:
+     \begin{itemize}
+         \item Modo A: $v = \underbrace{(e_1 + 2e_2)}_{\in W} + \underbrace{(3e_3)}_{\in W'}$
+         \item Modo B: $v = \underbrace{(e_1)}_{\in W} + \underbrace{(2e_2 + 3e_3)}_{\in W'}$
+     \end{itemize}
+     Entrambe le scritture sono valide. La mancanza di somma diretta fa perdere l'unicità.
  \end{enumerate}
  \end{boxesempio}
 
  \chapter{Trasformare gli Spazi: Applicazioni Lineari}
 
+ Ora che capiamo gli spazi (tramite le basi) e il linguaggio concreto (le coordinate in $\K^n$), definiamo le "funzioni" che ci permettono di passare da uno spazio all'altro in modo strutturato.
+
  \section{Definizione e Proprietà}
 
  \begin{definizione}[Applicazione Lineare]
- Un'applicazione $T: V \to W$ tra due K-spazi vettoriali $V$ e $W$ è \textbf{lineare} se conserva le operazioni:
+ Un'applicazione (una funzione) $T: V \to W$ tra due K-spazi vettoriali $V$ e $W$ è \textbf{lineare} se conserva le operazioni:
  \begin{enumerate}
-     \item \textbf{Additività:} $T(v_1 + v_2) = T(v_1) + T(v_2)$
-     \item \textbf{Omogeneità:} $T(\lambda v) = \lambda T(v)$
+     \item \textbf{Additività (Conserva la somma):} $T(v_1 + v_2) = T(v_1) + T(v_2)$
+     \item \textbf{Omogeneità (Conserva il prodotto scalare):} $T(\lambda v) = \lambda T(v)$
  \end{enumerate}
+ per ogni $v, v_1, v_2 \in V$ e $\lambda \in \K$.
  \end{definizione}
+
+ \paragraph{A cosa serve?}
+ Queste sono le uniche funzioni che "rispettano" la struttura di spazio vettoriale. Geometricamente, trasformano linee in linee (o punti) e, soprattutto, mantengono l'origine.
 
  \begin{osservazione}
- Una condizione necessaria per la linearità è che l'origine sia mappata nell'origine: $T(O_V) = O_W$.
+ Una condizione necessaria per la linearità (che deriva dall'omogeneità ponendo $\lambda=0$) è che l'origine sia mappata nell'origine:
+ $$ T(O_V) = O_W $$
+ Se $T(\mathbf{0}) \neq \mathbf{0}$, l'applicazione non può essere lineare.
  \end{osservazione}
 
- \section{Nucleo e Immagine}
+ \begin{boxesempio}
+ \begin{enumerate}
+     \item \textbf{Lineare (Moltiplicazione per Matrice):}
+     $T: \R^2 \to \R^2$, $T\begin{pmatrix} x \\ y \end{pmatrix} = \begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix} \begin{pmatrix} x \\ y \end{pmatrix} = \begin{pmatrix} x+2y \\ 3x+4y \end{pmatrix}$.
+     Questa è l'applicazione lineare prototipo. $T(\mathbf{0}) = \mathbf{0}$.
+    
+     \item \textbf{Lineare (La Derivata):}
+     $D: \R_{\le 3}[T] \to \R_{\le 2}[T]$, $D(P(T)) = P'(T)$.
+     $D(P+Q) = (P+Q)' = P' + Q' = D(P) + D(Q)$.
+     $D(\lambda P) = (\lambda P)' = \lambda P' = \lambda D(P)$.
+     La derivata è lineare.
+     \item \textbf{Lineare (La Mappa delle Coordinate):}
+     $T = \varphi_{\mathcal{B}}: V \to \K^n$ (definita nel capitolo precedente).
+     È lineare, come dimostrato negli appunti.
+    
+     \item \textbf{NON Lineare (Termine costante):}
+     $T: \R \to \R$, $T(x) = x+1$.
+     Fallisce il test dell'origine: $T(0) = 1 \neq 0$.
+    
+     \item \textbf{NON Lineare (Termine quadratico):}
+     $T: \R \to \R$, $T(x) = x^2$.
+     Supera il test dell'origine: $T(0)=0$. Ma fallisce l'additività:
+     $T(1+1) = T(2) = 4$.
+     $T(1) + T(1) = 1^2 + 1^2 = 2$.
+     $4 \neq 2$.
+ \end{enumerate}
+ \end{boxesempio}
+
+ \section{Nucleo e Immagine: L'Analisi di T}
+
+ Per capire come "funziona" un'applicazione lineare $T: V \to W$, dobbiamo farci due domande fondamentali:
+ \begin{enumerate}
+     \item \textbf{Cosa viene annullato?} Quali vettori di $V$ vengono "schiacciati" sull'origine $O_W$?
+     \item \textbf{Cosa viene prodotto?} Qual è l'insieme dei vettori in $W$ che vengono effettivamente "raggiunti" da $T$?
+ \end{enumerate}
+ La risposta a queste domande sono il Nucleo e l'Immagine.
 
  \begin{definizione}[Nucleo (Kernel)]
- Il \textbf{Nucleo} di $T$ ($\Ker(T)$) è l'insieme dei vettori del dominio $V$ che vengono mappati nel vettore nullo del codominio $W$:
+ Il \textbf{Nucleo} di $T$ (scritto $\Ker(T)$) è l'insieme dei vettori del dominio $V$ che vengono mappati nel vettore nullo del codominio $W$:
  $$ \Ker(T) = \{v \in V \mid T(v) = O_W\} $$
+ È un sottospazio vettoriale di $V$.
  \end{definizione}
+
+ \paragraph{A cosa serve?}
+ Il Nucleo misura la \textbf{perdita di informazione} della trasformazione. Se $\Ker(T) = \{O_V\}$ (contiene solo lo zero), l'applicazione è \textbf{iniettiva} (vettori diversi vanno in posti diversi). Se $\Ker(T)$ è grande, $T$ "collassa" molti vettori in un unico punto.
+
+ \begin{boxesempio}
+ \begin{enumerate}
+     \item \textbf{Nucleo della Derivata:}
+     $D: \R_{\le 2}[T] \to \R_{\le 2}[T]$.
+     $\Ker(D) = \{ P \mid P'(T) = 0 \}$.
+     Questi sono i polinomi la cui derivata è nulla: le costanti.
+     $\Ker(D) = \{ a \mid a \in \R \} = \Span\{1\}$.
+     \item \textbf{Nucleo della Proiezione:}
+     $T: \R^3 \to \R^3$, $T(x,y,z) = (x, y, 0)$. (Proiezione sul piano $xy$).
+     $\Ker(T) = \{ (x,y,z) \mid (x,y,0) = (0,0,0) \}$.
+     Questo richiede $x=0, y=0$. $z$ è libero.
+     $\Ker(T) = \{ (0,0,z) \mid z \in \R \} = \Span\{e_3\}$. (L'asse $z$).
+     \item \textbf{Nucleo Iniettivo (Rotazione):}
+     $T: \R^2 \to \R^2$, rotazione di 90 gradi.
+     L'unico vettore che viene mandato in $(0,0)$ è $(0,0)$ stesso. $\Ker(T) = \{ \mathbf{0} \}$.
+     \item \textbf{Nucleo di una Mappa $T: \R^2 \to \R$:}
+     $T(x,y) = x+y$.
+     $\Ker(T) = \{ (x,y) \mid x+y=0 \}$.
+     È la retta $y=-x$. $\Ker(T) = \Span\{(1, -1)\}$.
+     \item \textbf{Nucleo della Mappa Nulla:}
+     $T: V \to W$, $T(v) = O_W$ per ogni $v$.
+     $\Ker(T) = V$. (Tutto lo spazio di partenza viene annullato).
+ \end{enumerate}
+ \end{boxesempio}
 
  \begin{definizione}[Immagine (Image)]
- L'\textbf{Immagine} di $T$ ($\Img(T)$) è l'insieme dei vettori del codominio $W$ che sono "raggiunti" dalla trasformazione:
+ L'\textbf{Immagine} di $T$ (scritto $\Img(T)$) è l'insieme dei vettori del codominio $W$ che sono "raggiunti" dalla trasformazione. È il "range" o l'output effettivo di $T$:
  $$ \Img(T) = \{w \in W \mid \exists v \in V \text{ t.c. } T(v) = w\} $$
+ È un sottospazio vettoriale di $W$.
  \end{definizione}
 
- \begin{teorema}[Rango-Nullità]
+ \paragraph{A cosa serve?}
+ L'Immagine ci dice "dove va a finire" la trasformazione. Se $\Img(T) = W$, l'applicazione è \textbf{suriettiva} (tutto $W$ viene "coperto").
+
+ \begin{boxesempio}
+ \begin{enumerate}
+     \item \textbf{Immagine della Derivata:}
+     $D: \R_{\le 2}[T] \to \R_{\le 2}[T]$. $D(aT^2+bT+c) = 2aT+b$.
+     L'immagine è l'insieme di tutti i polinomi di grado al più 1.
+     $\Img(D) = \R_{\le 1}[T] = \Span\{1, T\}$.
+     \item \textbf{Immagine della Proiezione:}
+     $T: \R^3 \to \R^3$, $T(x,y,z) = (x, y, 0)$.
+     L'output è sempre un vettore con l'ultima componente nulla.
+     $\Img(T) = \{ (x,y,0) \mid x,y \in \R \} = \Span\{e_1, e_2\}$.
+     (Il piano $xy$).
+    
+     \item \textbf{Immagine di una Mappa $T: \R \to \R^2$:}
+     $T(t) = (t, 2t)$.
+     $\Img(T) = \{ (t, 2t) \mid t \in \R \}$.
+     È la retta $y=2x$ in $\R^2$. $\Img(T) = \Span\{(1, 2)\}$.
+     \item \textbf{Immagine Suriettiva (Rotazione):}
+     $T: \R^2 \to \R^2$, rotazione di 90 gradi.
+     Ogni vettore di $\R^2$ può essere raggiunto (ruotando un altro vettore). $\Img(T) = \R^2$.
+     \item \textbf{Immagine della Mappa Nulla:}
+     $T: V \to W$, $T(v) = O_W$ per ogni $v$.
+     L'unico output possibile è $O_W$. $\Img(T) = \{O_W\}$.
+ \end{enumerate}
+ \end{boxesempio}
+
+ \begin{teorema}[Rango-Nullità (o Teorema delle Dimensioni)]
+ Per un'applicazione lineare $T: V \to W$ (con $V$ di dimensione finita), le dimensioni del dominio, del nucleo e dell'immagine sono legate da una relazione fondamentale:
  $$ \dimn(V) = \dimn(\Ker(T)) + \dimn(\Img(T)) $$
+ dove $\dimn(\Ker(T))$ si chiama \textbf{nullità} e $\dimn(\Img(T))$ si chiama \textbf{rango} di $T$.
  \end{teorema}
 
+ \paragraph{A cosa serve?}
+ È una "legge di conservazione" della dimensione. La dimensione dello spazio di partenza $V$ si "distribuisce" tra ciò che viene annullato ($\Ker$) e ciò che viene prodotto ($\Img$). È lo strumento di calcolo e verifica più potente per le applicazioni lineari.
+
+ \section{Lo Spazio delle Applicazioni Lineari}
+
+ Gli appunti introducono un concetto affascinante: le applicazioni lineari stesse possono essere trattate come vettori.
+
+ \begin{definizione}[$\Hom(V,W)$]
+ L'insieme di \textbf{tutte} le applicazioni lineari da $V$ a $W$ si indica con $\Hom_{\K}(V,W)$.
+ Possiamo definire su questo insieme una somma e un prodotto per scalare:
+ \begin{itemize}
+     \item \textbf{Somma ($T+F$):} $(T+F)(v) = T(v) + F(v)$
+     \item \textbf{Prodotto ($\lambda T$):} $(\lambda T)(v) = \lambda T(v)$
+ \end{itemize}
+ \end{definizione}
+
+ \begin{proposizione}
+ Con le operazioni di somma e prodotto definite sopra, l'insieme $\Hom_{\K}(V,W)$ è esso stesso un K-Spazio Vettoriale.
+ \end{proposizione}
+
+ \paragraph{A cosa serve?}
+ Questo ci permette di trattare le funzioni come "oggetti" algebrici. La proposizione (tratta dagli appunti) che $T+F$ e $\lambda T$ sono ancora lineari se $T$ e $F$ lo sono, è la dimostrazione che $\Hom(V,W)$ è un sottospazio dello spazio di \emph{tutte} le funzioni (anche non lineari) da $V$ a $W$.
+
+ \begin{definizione}[Composizione di Applicazioni Lineari]
+ Date due applicazioni lineari $T: V \to W$ e $F: W \to U$, la loro \textbf{composizione} $F \circ T$ (prima $T$, poi $F$) è un'applicazione $F \circ T: V \to U$ definita da $(F \circ T)(v) = F(T(v))$.
+ \end{definizione}
+
+ \begin{proposizione}
+ La composizione di applicazioni lineari è ancora un'applicazione lineare.
+ \end{proposizione}
+
+ \paragraph{A cosa serve?}
+ Questo ci dice che possiamo "concatenare" trasformazioni lineari. Come vedremo, la composizione $F \circ T$ corrisponderà al \textbf{prodotto tra le matrici} associate.
+
  \begin{boxesercizio}[Calcolo di Basi per Nucleo e Immagine]
+ Questo è l'esercizio riassuntivo che unisce tutti i concetti visti finora.
  Consideriamo $T: \R^3 \to \R^3$ definita da $T\begin{pmatrix} x \\ y \\ z \end{pmatrix} = \begin{pmatrix} x-y+2z \\ 3x-y \\ 2x-y+z \end{pmatrix}$.
  Trovare una base di $\Ker(T)$ e $\Img(T)$.
 
  \textbf{Svolgimento:}
  \begin{enumerate}
-     \item \textbf{Matrice Associata $A$:}
+     \item \textbf{Trovare la Matrice Associata $A$:}
+     La maggior parte delle applicazioni lineari tra $\R^n$ e $\R^m$ è una moltiplicazione per matrice.
+     La matrice $A$ tale che $T(\mathbf{v}) = A \cdot \mathbf{v}$ si ottiene leggendo i coefficienti:
      $$ A = \begin{pmatrix} 1 & -1 & 2 \\ 3 & -1 & 0 \\ 2 & -1 & 1 \end{pmatrix} $$
     
      \item \textbf{Base del Nucleo $\Ker(T)$:}
-     Risolviamo $A \mathbf{v} = \mathbf{0}$. Riduciamo $A$ a scala:
+     Il Nucleo è l'insieme dei $\mathbf{v}$ tali che $T(\mathbf{v}) = \mathbf{0}$. Questo è \emph{esattamente} $V(S^0)$ per il sistema omogeneo $A \mathbf{v} = \mathbf{0}$.
+     Riduciamo $A$ a scala (come visto in precedenza):
      $$ A \sim \begin{pmatrix} 1 & -1 & 2 \\ 0 & 1 & -3 \\ 0 & 0 & 0 \end{pmatrix} $$
-     Variabile libera $z$. Base $\Ker(T) = \left\{ \begin{pmatrix} 1 \\ 3 \\ 1 \end{pmatrix} \right\}$.
-
+     Il sistema ridotto è $\begin{cases} x - y + 2z = 0 \\ y - 3z = 0 \end{cases}$.
+     La variabile $z$ è libera ($\vl = \{z\}$). La $\dimn(\Ker(T)) = 1$.
+     Risolvendo: $y = 3z$, e $x = y - 2z = (3z) - 2z = z$.
+     Il vettore soluzione è $\mathbf{v} = \begin{pmatrix} z \\ 3z \\ z \end{pmatrix} = z \begin{pmatrix} 1 \\ 3 \\ 1 \end{pmatrix}$.
+     Una \textbf{base di $\Ker(T)$} è $\mathcal{B}_{\Ker} = \left\{ \begin{pmatrix} 1 \\ 3 \\ 1 \end{pmatrix} \right\}$.
      \item \textbf{Base dell'Immagine $\Img(T)$:}
-     Corrisponde allo Span delle colonne pivot della matrice originale $A$ (colonne 1 e 2).
-     Base $\Img(T) = \left\{ \begin{pmatrix} 1 \\ 3 \\ 2 \end{pmatrix}, \begin{pmatrix} -1 \\ -1 \\ -1 \end{pmatrix} \right\}$.
+     L'Immagine è l'insieme di tutti i risultati $T(\mathbf{v}) = A\mathbf{v}$.
+     Questo è, per definizione, lo \textbf{Span delle colonne} della matrice $A$.
+     $$ \Img(T) = \Span \left\{ \text{Col 1}, \text{Col 2}, \text{Col 3} \right\} = \Span \left\{ \begin{pmatrix} 1 \\ 3 \\ 2 \end{pmatrix}, \begin{pmatrix} -1 \\ -1 \\ -1 \end{pmatrix}, \begin{pmatrix} 2 \\ 0 \\ 1 \end{pmatrix} \right\} $$
+     Per trovare una base, dobbiamo solo estrarre i generatori L.I.
+     \textbf{Regola Pratica:} Una base per $\Img(T)$ è data dalle \textbf{colonne della matrice $A$ ORIGINALE} che corrispondono alle \textbf{colonne PIVOT} della matrice ridotta.
+     I nostri pivot (dalla riduzione di Gauss) erano nelle colonne 1 e 2.
+    
+     Una \textbf{base di $\Img(T)$} è $\mathcal{B}_{\Img} = \left\{ \begin{pmatrix} 1 \\ 3 \\ 2 \end{pmatrix}, \begin{pmatrix} -1 \\ -1 \\ -1 \end{pmatrix} \right\}$.
+     La $\dimn(\Img(T)) = 2$.
+
+     \item \textbf{Verifica (Teorema Rango-Nullità):}
+     $\dimn(V) = \dimn(\R^3) = 3$.
+     $\dimn(\Ker(T)) + \dimn(\Img(T)) = 1 + 2 = 3$.
+     La verifica torna: $\dimn(V) = 3$.
  \end{enumerate}
+ \end{boxesercizio}
+
+ \chapter{Oltre l'Origine: Spazi Affini}
+
+ Abbiamo visto che $V(S^0)$ (omogeneo) è un sottospazio vettoriale, ma $V(S)$ (non omogeneo) non lo è, perché non contiene $\mathbf{0}$. Che cos'è allora? È un sottospazio vettoriale "spostato".
+
+ \section{Sottospazi Affini e Giacitura}
+
+ \begin{definizione}[Spazio Affine $A^n(\K)$]
+ Mentre $\K^n$ è lo spazio vettoriale (frecce dall'origine), $A^n(\K)$ è lo \textbf{spazio affine}, cioè lo spazio dei \textbf{punti}.
+ La distinzione è sottile: $\begin{pmatrix} 1 \\ 2 \end{pmatrix} \in \R^2$ è un vettore, $[1, 2] \in A^2(\R)$ è un punto.
+ L'operazione fondamentale è $P + v = Q$ (Punto + Vettore = Punto).
+ \end{definizione}
+
+ \begin{definizione}[Sottospazio Affine]
+ Un \textbf{sottospazio affine} $H$ è un sottoinsieme di $A^n(\K)$ che è la soluzione di un sistema lineare $S$.
+ Equivalentemente, è un insieme della forma:
+ $$ H = P_0 + W = \{ P_0 + w \mid w \in W \} $$
+ dove $P_0$ è un punto (una soluzione particolare di $S$) e $W$ è un sottospazio vettoriale (la soluzione $V(S^0)$ dell'omogeneo associato), chiamato \textbf{Giacitura} di $H$.
+ La dimensione di $H$ è la dimensione della sua giacitura $W$. $\dimn(H) = \dimn(W)$.
+ \end{definizione}
+
+ \paragraph{A cosa serve?}
+ Questa definizione ci "libera" dall'origine. Ci permette di descrivere geometricamente rette, piani, iperpiani, ecc., che \emph{non} passano per l'origine.
+
+ \begin{osservazione}
+ La soluzione di un sistema lineare $V(S)$ è \textbf{sempre} un sottospazio affine.
+ Se $\mathbf{v_p}$ è una soluzione particolare (il nostro "punto $P_0$") e $W = V(S^0)$ è la giacitura (lo spazio delle soluzioni del sistema omogeneo associato), allora:
+ $$ V(S) = \mathbf{v_p} + W $$
+ Questo collega l'algebra dei sistemi lineari alla geometria degli spazi affini.
+ \end{osservazione}
+
+ \begin{boxesempio}
+ \begin{enumerate}
+     \item \textbf{Una retta in $A^2(\R)$ (non per l'origine):}
+     $H = [1, 0] + \Span\left\{ \begin{pmatrix} 1 \\ 1 \end{pmatrix} \right\}$.
+     $P_0=(1,0)$ (punto), $W=\Span\{(1,1)\}$ (giacitura, $\dimn=1$).
+     In forma cartesiana: $x-y = 1$.
+     \item \textbf{Un piano in $A^3(\R)$ (non per l'origine):}
+     $H = \{ (x,y,z) \mid x+y+z = 1 \}$.
+     La giacitura è $W = \{ (x,y,z) \mid x+y+z = 0 \}$, $\dimn(W)=2$.
+     Un punto $P_0$ è una soluzione particolare, es. $P_0 = [1, 0, 0]$.
+     \item \textbf{Un punto (Dimensione 0):}
+     $H = \{ [1, 2, 3] \}$.
+     Questo è $P_0 = [1,2,3]$ e $W = \{O_V\}$. $\dimn(H)=0$.
+     \item \textbf{Un sottospazio vettoriale è anche affine:}
+     Se $H$ è un sottospazio vettoriale, è $H = O_V + H$.
+     È un sottospazio affine che "passa per l'origine" $P_0 = O_V$.
+     \item \textbf{Soluzione di un sistema non omogeneo:}
+     Dall'esercizio nel Capitolo 2, $V(S) = \begin{pmatrix} 4 \\ 0 \\ 2 \\ -1 \\ 0 \end{pmatrix} + \Span \left\{ \begin{pmatrix} -1 \\ 1 \\ 0 \\ 0 \\ 0 \end{pmatrix}, \begin{pmatrix} 4 \\ 0 \\ 3 \\ -1 \\ 1 \end{pmatrix} \right\}$.
+     Questa è la forma $P_0 + W$. È un sottospazio affine di $A^5(\R)$ di dimensione 2.
+ \end{enumerate}
+ \end{boxesempio}
+
+ \section{Interazione tra Sottospazi Affini}
+
+ Come per i sottospazi vettoriali, possiamo studiare l'intersezione e la "somma" di sottospazi affini $H = P_0 + W$ e $H' = Q_0 + W'$.
+
+ \begin{definizione}[Intersezione Affine]
+ L'\textbf{intersezione} $H \cap H'$ è l'insieme dei punti che appartengono a entrambi.
+ $$ H \cap H' = \{ P \in A^n(\K) \mid P \in H \text{ e } P \in H' \} $$
+ \end{definizione}
+
+ \paragraph{A cosa serve?}
+ Se $H=V(S)$ e $H'=V(S')$, allora l'intersezione $H \cap H'$ è semplicemente la soluzione del sistema combinato $V(S \cup S')$.
+ A differenza dei sottospazi vettoriali, l'intersezione affine può essere \textbf{vuota} ($\emptyset$).
+
+ \begin{definizione}[Somma Affine (Chiusura Affine)]
+ La \textbf{somma affine} di $H$ e $H'$, indicata con $\overline{H H'}$, è il \textbf{più piccolo sottospazio affine} che contiene sia $H$ che $H'$.
+ \end{definizione}
+
+ \begin{proposizione}[Calcolo della Somma Affine]
+ Dati $H = P_0 + W$ e $H' = Q_0 + W'$, la giacitura della loro somma è:
+ $$ \Giac(\overline{H H'}) = W + W' + \Span\{\vec{P_0 Q_0}\} $$
+ dove $\vec{P_0 Q_0}$ è il vettore che congiunge i due punti base.
+ \end{proposizione}
+
+ \paragraph{A cosa serve?}
+ La somma affine è più complicata della somma vettoriale.
+ Non basta sommare le giaciture ($W+W'$), ma bisogna includere anche la "direzione" che collega i due sottospazi, data dal vettore $\vec{P_0 Q_0}$.
+
+ \begin{definizione}[Parallelismo]
+ Due sottospazi affini $H = P_0+W$ e $H' = Q_0+W'$ si dicono \textbf{paralleli} se la giacitura di uno è contenuta nell'altra (o viceversa).
+ Il caso più comune è $\Giac(H) = \Giac(H')$.
+ \end{definizione}
+
+ \paragraph{A cosa serve?}
+ Questa definizione formale cattura la nostra intuizione geometrica.
+ Due rette sono parallele se i loro vettori di direzione (le loro giaciture $W$ e $W'$) sono collineari (cioè $\Span\{v_1\} = \Span\{v_2\}$).
+
+ \begin{boxesempio}
+ Siano $H, H' \subset A^3(\R)$.
+ \begin{enumerate}
+     \item \textbf{Due Rette Parallele (non incidenti):}
+     $H = [1,0,0] + \Span\{(1,1,0)\}$.
+     $H' = [0,0,1] + \Span\{(1,1,0)\}$.
+     Le giaciture sono uguali ($W=W'$), quindi sono parallele. $H \cap H' = \emptyset$.
+     \item \textbf{Due Rette Sghembe (non parallele, non incidenti):}
+     $H = [0,0,0] + \Span\{(1,0,0)\}$ (asse $x$).
+     $H' = [0,1,1] + \Span\{(0,0,1)\}$ (retta parallela all'asse $z$, passante per $[0,1,1]$).
+     Le giaciture $W=\Span\{e_1\}$ e $W'=\Span\{e_3\}$ non sono parallele.
+     $H \cap H' = \emptyset$.
+    
+     \item \textbf{Retta e Piano Paralleli:}
+     $H = [0,0,5] + \Span\{e_1\}$ (retta parallela all'asse $x$, a quota 5).
+     $H' = [0,0,0] + \Span\{e_1, e_2\}$ (piano $xy$).
+     $\Giac(H) \subset \Giac(H')$, quindi sono paralleli. $H \cap H' = \emptyset$.
+     \item \textbf{Retta e Piano Incidenti:}
+     $H = [0,0,0] + \Span\{e_3\}$ (asse $z$).
+     $H' = [1,1,0] + \Span\{e_1, e_2\}$ (piano $z=0$, traslato). No, $H'=\{ (x,y,z) \mid z=0 \}$.
+     Rifacciamo: $H' = \{ (x,y,z) \mid z=5 \}$ (piano a quota 5).
+     $H \cap H' = [0,0,5]$.
+     Si incontrano in un punto.
+    
+     \item \textbf{Due Piani Paralleli:}
+     $H = \{ (x,y,z) \mid x+y+z=1 \}$.
+     $H' = \{ (x,y,z) \mid x+y+z=2 \}$.
+     Hanno la stessa giacitura $W = \{ (x,y,z) \mid x+y+z=0 \}$. Sono paralleli.
+ \end{enumerate}
+ \end{boxesempio}
+
+ \chapter{Costruire e Invertire Applicazioni Lineari}
+
+ Abbiamo visto che un'applicazione lineare è determinata da come agisce sui vettori. Ma quanti vettori dobbiamo conoscere per "conoscere" tutta la funzione? E possiamo sempre costruire un'applicazione lineare a nostro piacimento?
+
+ \section{Il Teorema di Esistenza e Unicità}
+
+ Questo è il teorema fondamentale per gli esercizi di costruzione delle applicazioni lineari (come l'esercizio 1 del foglio). Ci dice che non serve definire la funzione su infiniti vettori: basta definirla su una \textbf{base}.
+
+ \begin{teorema}[Esistenza e Unicità]
+ Siano $V$ e $W$ due spazi vettoriali su un campo $\K$, e sia $\mathcal{B} = \{v_1, \dots, v_n\}$ una base di $V$.
+ Comunque scelti $n$ vettori arbitrari $w_1, \dots, w_n$ in $W$, esiste un'\textbf{unica} applicazione lineare $T: V \to W$ tale che:
+ $$ T(v_1) = w_1, \quad T(v_2) = w_2, \quad \dots, \quad T(v_n) = w_n $$
+ \end{teorema}
+
+ \paragraph{A cosa serve?}
+ Ci dà un potere enorme: possiamo "programmare" un'applicazione lineare decidendo dove mandare i vettori della base.
+ Una volta fissate le immagini della base, il destino di tutti gli altri vettori di $V$ è segnato dalla linearità.
+ Infatti, per ogni $v \in V$, scriviamo $v = \alpha_1 v_1 + \dots + \alpha_n v_n$.
+ Allora:
+ $$ T(v) = T(\alpha_1 v_1 + \dots + \alpha_n v_n) = \alpha_1 T(v_1) + \dots + \alpha_n T(v_n) = \alpha_1 w_1 + \dots + \alpha_n w_n $$
+
+ \section{Esercizi di Esistenza: La Guida Pratica}
+
+ Spesso negli esercizi (es. Es 1 del foglio) non ci viene fornita una base, ma un insieme generico di vettori di partenza e le loro immagini desiderate. Ci viene chiesto: \emph{"Esiste questa applicazione lineare? È unica?"}.
+
+ Sia la richiesta: $T(v_i) = w_i$ per $i=1, \dots, k$.
+ Dobbiamo analizzare i vettori di partenza $\{v_1, \dots, v_k\}$.
+
+ \begin{boxesempio}[Algoritmo di Verifica Esistenza]
+ \begin{enumerate}
+     \item \textbf{Caso 1: I vettori di partenza sono una Base.}
+     Se $\{v_1, \dots, v_n\}$ sono una base di $V$, allora l'applicazione esiste ed è \textbf{unica} (per il Teorema sopra).
+     \item \textbf{Caso 2: I vettori sono L.I. ma non generano tutto $V$ (sono pochi).}
+     Se $\{v_1, \dots, v_k\}$ sono linearmente indipendenti ma $k < \dimn(V)$, l'applicazione \textbf{esiste ma non è unica}.
+     Possiamo completare l'insieme a una base $\{v_1, \dots, v_k, \dots, v_n\}$ e mandare i vettori aggiunti dove vogliamo (infinite scelte).
+     \item \textbf{Caso 3: I vettori sono Linearmente Dipendenti (c'è ridondanza).}
+     Questo è il caso critico.
+     Se un vettore è combinazione lineare degli altri, ad esempio $v_3 = v_1 + v_2$, allora per la linearità \emph{deve} valere la stessa relazione tra le immagini:
+     $$ T(v_3) \text{ deve essere uguale a } T(v_1) + T(v_2) \implies w_3 = w_1 + w_2 $$
+     \begin{itemize}
+         \item Se la condizione ($w_3 = w_1 + w_2$) è \textbf{soddisfatta}: L'applicazione esiste (potrebbe essere unica o no, dipende se generano $V$).
+         \item Se la condizione \textbf{non è soddisfatta}: L'applicazione \textbf{non esiste}. È impossibile.
+     \end{itemize}
+ \end{enumerate}
+ \end{boxesempio}
+
+ \begin{boxesercizio}[Esempio tratto da Es 1]
+ Determinare se esiste $T: \R^3 \to \R^3$ tale che:
+ $$ T\begin{pmatrix} 1 \\ 0 \\ 1 \end{pmatrix} = \begin{pmatrix} 0 \\ 0 \\ 1 \end{pmatrix}, \quad 
+    T\begin{pmatrix} 0 \\ 1 \\ 0 \end{pmatrix} = \begin{pmatrix} 1 \\ 0 \\ 1 \end{pmatrix}, \quad
+    T\begin{pmatrix} 1 \\ 1 \\ 1 \end{pmatrix} = \begin{pmatrix} 1 \\ 0 \\ 0 \end{pmatrix} $$
+ \textbf{Svolgimento:}
+ Chiamiamo i vettori di partenza $v_1, v_2, v_3$.
+ Controlliamo se sono una base o se sono dipendenti.
+ Si nota a occhio che $v_3 = v_1 + v_2$:
+ $$ \begin{pmatrix} 1 \\ 1 \\ 1 \end{pmatrix} = \begin{pmatrix} 1 \\ 0 \\ 1 \end{pmatrix} + \begin{pmatrix} 0 \\ 1 \\ 0 \end{pmatrix} $$
+ Perché $T$ sia lineare, deve valere $T(v_3) = T(v_1) + T(v_2)$.
+ Verifichiamo le immagini date ($w_1, w_2, w_3$):
+ $$ w_1 + w_2 = \begin{pmatrix} 0 \\ 0 \\ 1 \end{pmatrix} + \begin{pmatrix} 1 \\ 0 \\ 1 \end{pmatrix} = \begin{pmatrix} 1 \\ 0 \\ 2 \end{pmatrix} $$
+ Ma il testo richiede $w_3 = \begin{pmatrix} 1 \\ 0 \\ 0 \end{pmatrix}$.
+ Poiché $\begin{pmatrix} 1 \\ 0 \\ 0 \end{pmatrix} \neq \begin{pmatrix} 1 \\ 0 \\ 2 \end{pmatrix}$, l'applicazione \textbf{non esiste}.
+ \end{boxesercizio}
+
+ \section{Proiezioni}
+
+ Le proiezioni sono un tipo speciale di applicazione lineare legata alla somma diretta (Esercizio 2 del foglio).
+
+ \begin{definizione}[Proiezione]
+ Sia $V = U \oplus W$. Ogni vettore $v \in V$ si scrive in modo unico come $v = u + w$ con $u \in U, w \in W$.
+ La \textbf{Proiezione su $U$ lungo $W$} (indicata con $\pi_U^W$ o $P$) è l'applicazione che "butta via" la componente $W$ e tiene solo $U$:
+ $$ \pi_U^W(v) = u $$
+ \end{definizione}
+
+ \paragraph{Proprietà chiave:}
+ \begin{enumerate}
+     \item È lineare.
+     \item $P(u) = u$ per ogni $u \in U$ (i vettori su cui proietto restano fermi).
+     \item $P(w) = \mathbf{0}$ per ogni $w \in W$ (la direzione di proiezione viene annullata).
+     \item $P \circ P = P$ (Proiettare due volte è come proiettare una volta sola).
+     \item $\Img(P) = U$ e $\Ker(P) = W$.
+ \end{enumerate}
+
+ \begin{boxesercizio}[Calcolo della Proiezione]
+ Dati $V = \Span\{v_1\}$ e $W$ definito da un'equazione in $\R^3$.
+ Trovare la matrice di proiezione su $V$ lungo $W$.
+ \textbf{Strategia:}
+ \begin{enumerate}
+     \item Trovare una base di $V$ (diciamo $\{b_1\}$) e una base di $W$ (diciamo $\{b_2, b_3\}$).
+     \item Poiché $V \oplus W = \R^3$, l'insieme $\mathcal{B} = \{b_1, b_2, b_3\}$ è una base di tutto lo spazio.
+     \item Sappiamo come agisce la proiezione sulla base $\mathcal{B}$:
+     $$ P(b_1) = b_1 \quad (\text{perché } b_1 \in V) $$
+     $$ P(b_2) = \mathbf{0}, \quad P(b_3) = \mathbf{0} \quad (\text{perché } b_2, b_3 \in W) $$
+     \item Costruiamo la matrice associata rispetto a questa base comoda $\mathcal{B}$ (sarà quasi vuota!) oppure usiamo il cambio di base per trovarla rispetto alla canonica.
+ \end{enumerate}
+ \end{boxesercizio}
+
+ \section{Inversa di un'Applicazione Lineare}
+
+ Come per le funzioni, ci chiediamo se possiamo "tornare indietro".
+
+ \begin{definizione}[Applicazione Invertibile]
+ Un'applicazione lineare $T: V \to W$ è \textbf{invertibile} se esiste $T^{-1}: W \to V$ tale che $T^{-1} \circ T = id_V$ e $T \circ T^{-1} = id_W$.
+ \end{definizione}
+
+ \begin{proposizione}
+ $T$ è invertibile $\iff$ $T$ è bigettiva (Isomorfismo) $\iff$ la matrice associata $A$ è quadrata e $\det(A) \neq 0$ (o $\rk(A) = n$).
+ \end{proposizione}
+
+ \paragraph{Calcolo dell'Inversa (Metodo Gauss-Jordan)}
+ Se $T(\mathbf{x}) = A\mathbf{x}$, allora l'inversa è data da $T^{-1}(\mathbf{y}) = A^{-1}\mathbf{y}$.
+ Per calcolare $A^{-1}$:
+ \begin{enumerate}
+     \item Scriviamo la matrice a blocchi $(A | I_n)$, dove $I_n$ è la matrice identità.
+     \item Usiamo le mosse di Gauss per trasformare la parte sinistra ($A$) nell'identità ($I$).
+     \item Le stesse mosse trasformeranno la parte destra ($I$) nell'inversa ($A^{-1}$).
+     $$ (A | I) \xrightarrow{\text{Gauss}} (I | A^{-1}) $$
+ \end{enumerate}
+
+ \begin{boxesercizio}[Inversa di polinomi - Esercizio 3]
+ Sia $F(P) = P - P'$.
+ Trovare l'inversa.
+ Se $F$ agisce su polinomi di grado $\le 2$, troviamo la matrice $A$ rispetto alla base $\{1, t, t^2\}$.
+ Se $P(t) = 1 \implies F(1) = 1 - 0 = 1$.
+ Se $P(t) = t \implies F(t) = t - 1$.
+ Se $P(t) = t^2 \implies F(t^2) = t^2 - 2t$.
+ Matrice (per colonne):
+ $$ A = \begin{pmatrix} 1 & -1 & 0 \\ 0 & 1 & -2 \\ 0 & 0 & 1 \end{pmatrix} $$
+ Questa matrice è triangolare con pivot non nulli $\implies$ invertibile.
+ Per trovare l'inversa $A^{-1}$, usiamo Gauss-Jordan o i sistemi lineari.
  \end{boxesercizio}
 
 \end{document}

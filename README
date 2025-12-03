@@ -1,0 +1,2 @@
+Per eseguire su Windows: lualatex -shell-escape --interaction=nonstopmode --halt-on-error --file-line-error
+Alternativamente eseguire il comando: make

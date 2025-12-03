@@ -1,6 +1,6 @@
-PWD C:\Users\user\Documents\Github Desktop\mattia3393\Appunti-Universita\2° anno\Geometria\Geometria-Appunti-LaTeX\Appunti
+PWD C:\Users\user\Documents\Github Desktop\mattia3393\Appunti-Universita\2° anno\Geometria\Geometria-Appunti-LaTeX\Dispense-Geometria
 INPUT C:\Users\user\AppData\Local\MiKTeX\miktex\data\le\pdftex\pdflatex.fmt
-INPUT c:\Users\user\Documents\Github Desktop\mattia3393\Appunti-Universita\2° anno\Geometria\Geometria-Appunti-LaTeX\Appunti\index.tex
+INPUT c:\Users\user\Documents\Github Desktop\mattia3393\Appunti-Universita\2° anno\Geometria\Geometria-Appunti-LaTeX\Dispense-Geometria\index.tex
 OUTPUT index.log
 INPUT .\unina_doc_class.cls
 INPUT unina_doc_class.cls
